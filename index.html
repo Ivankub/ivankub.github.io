@@ -471,6 +471,31 @@
                     }, i**1.4);
                 }
             }, 1);
+            setTimeout(() => {
+                $("#start").css({
+                    "top": "500px",
+                    "height": "100px"
+                });
+                setTimeout(() => {
+                    $("#text_add_door").css("display", "none");
+                    $("#check").css("display", "none");
+                    $("#start").css("height", "45px");
+                }, 250);
+                setTimeout(() => {
+                    $("#text_add_walls").css("display", "none");
+                    $("#text_add_key").css("display", "none");
+                }, 500);
+                setTimeout(() => {
+                    $("#start").css({
+                        "width": "45px",
+                        "font-size": "0.6em",
+                        "opacity": "0"
+                    });
+                }, 750);
+                setTimeout(() => {
+                    $("#start").css("display", "none");
+                }, 1250);
+            }, 1000);
         }
         else{
             alert("CHECK YOUR LEVEL!")
@@ -530,6 +555,7 @@
         background-color: rgb(233, 233, 233);
         text-align: center;
         font-size: 2em;
+        transition: 0.5s;
     }
     #text_add_key{
         width: 185px;
@@ -541,6 +567,7 @@
         background-color: rgb(233, 233, 233);
         text-align: center;
         font-size: 2em;
+        transition: 0.5s;
     }
     #text_add_door{
         width: 185px;
@@ -552,6 +579,7 @@
         background-color: rgb(233, 233, 233);
         text-align: center;
         font-size: 2em;
+        transition: 0.5s;
     }
     #check{
         width: 185px;
@@ -563,6 +591,7 @@
         background-color: rgb(233, 233, 233);
         font-size: 2em;
         text-align: center;
+        transition: 0.5s;
     }
     #start{
         width: 390px;
@@ -574,6 +603,7 @@
         background-color: rgb(233, 233, 233);
         font-size: 2em;
         text-align: center;
+        transition: 0.5s;
     }
     .block{
         width: 37px;
