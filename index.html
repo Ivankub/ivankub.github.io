@@ -26,6 +26,7 @@
         <div id="check">CHECK</div>
         <div id="start">START</div>
         <div id="win">YOU WIN</div>
+        <div id="restart">RESTART</div>
     </div>
 </body>
 <script type="text/javascript">
@@ -125,7 +126,22 @@
             }
         }
     }
-    setTimeout(() => {
+    $("#restart").click(function(){
+        start_game();
+        $("#start").css("width", "390px");
+        $("#walls").children().remove();
+        $("#smoke_all").children().remove();
+        $("#door").children().remove();
+        $("#key").children().remove();
+        $(".button").attr("class", "block button");
+        $("#win").css({
+            "display": "none",
+            "opacity": "0"
+        });
+        keys = 0
+        doors = 0
+    });
+    function start_game(){
         wid = parseInt($("body").css("width"))
         left_pole = ((wid-390)/2)-2+"px";
         left_pole_2 = ((wid-390)/2)+200+"px";
@@ -135,6 +151,11 @@
         $("#text_add_key").css("left", left_pole_2);
         $("#text_add_door").css("left", left_pole);
         $("#start").css("left", left_pole);
+        $("#restart").css({
+            "left": left_pole,
+            "opacity": "0",
+            "display": "none"
+        });
         $("#time").css("left", left_pole);
         $("#score").css("left", left_score);
         $("#collect_k").css("left", left_pole);
@@ -149,7 +170,9 @@
             "top": 102+(pos[1]*39)+"px"
         });
         near();
-        // game();
+    }
+    setTimeout(() => {
+        start_game();
     }, 1);
     $(".button").click(function(){
         if ($(this).attr("class") == "block_near button") {
@@ -293,7 +316,11 @@
                     $(".door").css("background-image", "url('images/door_128.png')");
                     setTimeout(() => {
                         $("#win").css("opacity", "1");
+                        $("#restart").css("display", "block");
                     }, 1000);
+                    setTimeout(() => {
+                        $("#restart").css("opacity", "1");
+                    }, 2000);
                     collect_keys = 0
                 }
             }
@@ -604,6 +631,21 @@
         font-size: 2em;
         text-align: center;
         transition: 0.5s;
+    }
+    #restart{
+        width: 390px;
+        height: 45px;
+        position: fixed;
+        top: 100px;
+        border-radius: 5px;
+        border: 2px solid rgb(0, 177, 231);
+        background-color: rgb(233, 233, 233);
+        font-size: 2em;
+        text-align: center;
+        transition: 0.5s;
+        display: none;
+        opacity: 0;
+        z-index: 1001;
     }
     .block{
         width: 37px;
