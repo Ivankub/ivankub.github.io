@@ -403,10 +403,6 @@
         if (level_is_ok == 1) {
             smoke_place(pos[0], pos[1]);
             function smoke_place(pos_0, pos_1){
-                function get_element(x, y){
-                    wall_id = document.getElementById(x+"_"+y+"_wall")
-                    return wall_id
-                }
                 function get_element_s(x, y){
                     smoke_id = document.getElementById(x+"_"+y+"_smoke")
                     return smoke_id
@@ -423,7 +419,7 @@
                 }
                 function check_all(pos_x, pos_y) {
                     ok = null
-                    if (get_element(pos_x, pos_y) != null || get_element_s(pos_x, pos_y) != null || get_element_m(pos_x, pos_y) != null) {
+                    if (get_element_s(pos_x, pos_y) != null || get_element_m(pos_x, pos_y) != null) {
                         ok = "no_ok"
                     }
                     return ok
