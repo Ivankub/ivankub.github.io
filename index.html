@@ -18,15 +18,18 @@
         <div id="door"></div>
         <div id="walls"></div>
         <div id="checkes"></div>
+        <div id="smoke_all"></div>
         <div id="text_game">NEW LEVEL!</div>
         <div id="text_add_walls">ADD WALLS</div>
         <div id="text_add_key">ADD KEY</div>
         <div id="text_add_door">ADD DOOR</div>
         <div id="check">CHECK</div>
+        <div id="start">START</div>
         <div id="win">YOU WIN</div>
     </div>
 </body>
 <script type="text/javascript">
+    let level_is_ok = 0
     let keys = 0
     let doors = 0
     let collect_keys = 0
@@ -42,69 +45,6 @@
         block = "<div id='"+(x+"_"+y)+"' class='block button'></div>"
         $("#pole").append(block)
     }
-    // function game(){
-    //     setInterval(() => {
-    //         let ok = 0
-    //         if ((interval - time_pass) >= 1) {
-    //             time = (interval-time_pass)/100;
-    //             if (String(time).length == 4) {
-    //                 $("#time").text(time+"s");
-    //             }
-    //             else if (String(time).length == 3) {
-    //                 $("#time").text(time+" s");
-    //             }
-    //             else if (String(time).length == 2) {
-    //                 $("#time").text(time+"  s");
-    //             }
-    //             else if (String(time).length == 1) {
-    //                 $("#time").text(time+"   s");
-    //             }
-    //             time_pass = time_pass + 1
-    //         }
-    //         else{
-    //             time_pass = 0
-    //             ok = 0
-    //             let pos_0
-    //             let pos_1
-    //             while (ok == 0){
-    //                 let all = $("#coins").children().length
-    //                 let check = 0
-    //                 pos_0 = Math.floor(Math.random() * (10));
-    //                 pos_1 = Math.floor(Math.random() * (10));
-    //                 for (let i = 0; i < all; i++) {
-    //                     let id_coin = $("#coins").children(i).attr("id");
-    //                     if ((pos_0+"_"+pos_1+"_coin") != id_coin) {
-    //                         check = check + 1
-    //                     }
-    //                 }
-    //                 if (check == all) {
-    //                     ok = 1
-    //                 }
-    //             }
-    //             coin = "<div id='"+(pos_0+"_"+pos_1+"_coin")+"' class='coin'></div>"
-    //             $("#coins").append(coin)
-    //             id_coin = String("#"+pos_0+"_"+pos_1+"_coin")
-    //             $(id_coin).css({
-    //                 "left": ((wid-390)/2)-3+(pos_0*39)+"px",
-    //                 "top": 102+(pos_1*39)+"px"
-    //             });
-    //             setTimeout(() => {
-    //                 $(id_coin).attr("class", "coin_start");
-    //                 $(id_coin).css({
-    //                     "left": ((wid-390)/2)-3+(pos_0*39)+"px",
-    //                     "top": 102+(pos_1*39)+"px"
-    //                 });
-    //                 setTimeout(() => {
-    //                     $(id_coin).attr("class", "coin");
-    //                     $(id_coin).css({
-    //                         "left": ((wid-390)/2)-3+(pos_0*39)+"px",
-    //                         "top": 102+(pos_1*39)+"px"
-    //                     });
-    //                 }, 250);
-    //             }, 250);
-    //         }
-    //     }, 10);
-    // }
     function collect(){
         for (let i = 0; i < $("#coins").children().length; i++) {
             let id_coin = $("#coins").children()[i].id
@@ -143,22 +83,46 @@
         if (pos[0]-1 >= 0) {
             x = pos[0]-1
             y = pos[1]
-            $("#"+x+"_"+y).attr("class", "block_near button")
+            $("#"+x+"_"+y).attr("class", "block_near button");
+            if (document.getElementById(x+"_"+y+"_smoke") != null) {
+                $("#"+x+"_"+y+"_smoke").css({
+                    "opacity": "0",
+                    "display": "none"
+                });
+            }
         }
         if (pos[0]+1 <= 9) {
             x = pos[0]+1
             y = pos[1]
-            $("#"+x+"_"+y).attr("class", "block_near button")
+            $("#"+x+"_"+y).attr("class", "block_near button");
+            if (document.getElementById(x+"_"+y+"_smoke") != null) {
+                $("#"+x+"_"+y+"_smoke").css({
+                    "opacity": "0",
+                    "display": "none"
+                });
+            }
         }
         if (pos[1]-1 >= 0) {
             x = pos[0]
             y = pos[1]-1
-            $("#"+x+"_"+y).attr("class", "block_near button")
+            $("#"+x+"_"+y).attr("class", "block_near button");
+            if (document.getElementById(x+"_"+y+"_smoke") != null) {
+                $("#"+x+"_"+y+"_smoke").css({
+                    "opacity": "0",
+                    "display": "none"
+                });
+            }
         }
         if (pos[1]+1 <= 9) {
             x = pos[0]
             y = pos[1]+1
-            $("#"+x+"_"+y).attr("class", "block_near button")
+            $("#"+x+"_"+y).attr("class", "block_near button");
+            if (document.getElementById(x+"_"+y+"_smoke") != null) {
+                $("#"+x+"_"+y+"_smoke").css({
+                    "opacity": "0",
+                    "display": "none"
+                });
+            }
         }
     }
     setTimeout(() => {
@@ -170,6 +134,7 @@
         $("#text_add_walls").css("left", left_pole);
         $("#text_add_key").css("left", left_pole_2);
         $("#text_add_door").css("left", left_pole);
+        $("#start").css("left", left_pole);
         $("#time").css("left", left_pole);
         $("#score").css("left", left_score);
         $("#collect_k").css("left", left_pole);
@@ -423,13 +388,98 @@
         setTimeout(() => {
             if (is_key == 0 || is_door == 0) {
                 alert("YOUR LEVEL ISN'T CORRECT!❌");
+                level_is_ok = 0
             }
             else{
                 alert("YOUR LEVEL IS CORRECT!✅");
+                level_is_ok = 1
             }
             $("#checkes").children().remove()
         }, 500);
     });
+    $("#start").click(function(){
+        let wall_id
+        let check_id
+        if (level_is_ok == 1) {
+            smoke_place(pos[0], pos[1]);
+            function smoke_place(pos_0, pos_1){
+                function get_element(x, y){
+                    wall_id = document.getElementById(x+"_"+y+"_wall")
+                    return wall_id
+                }
+                function get_element_s(x, y){
+                    smoke_id = document.getElementById(x+"_"+y+"_smoke")
+                    return smoke_id
+                }
+                function get_element_m(x, y){
+                    oke = null
+                    if (pos[0] != x || pos[1] != y) {
+                        oke = null
+                    }
+                    else{
+                        oke = "not null"
+                    }
+                    return oke
+                }
+                function check_all(pos_x, pos_y) {
+                    ok = null
+                    if (get_element(pos_x, pos_y) != null || get_element_s(pos_x, pos_y) != null || get_element_m(pos_x, pos_y) != null) {
+                        ok = "no_ok"
+                    }
+                    return ok
+                }
+                if (pos_0-1 >= 0 && check_all(pos_0-1, pos_1) == null) {
+                    smoke = "<div id='"+((pos_0-1)+"_"+pos_1+"_smoke")+"' class='smoke'></div>"
+                    $("#smoke_all").append(smoke)
+                    id_smoke = String("#"+(pos_0-1)+"_"+pos_1+"_smoke")
+                    $(id_smoke).css({
+                        "left": ((wid-390)/2)-2+((pos_0-1)*39)+"px",
+                        "top": 100+(pos_1*39)+"px"
+                    });
+                }
+                if (pos_0+1 <= 9 && check_all(pos_0+1, pos_1) == null) {
+                    smoke = "<div id='"+((pos_0+1)+"_"+pos_1+"_smoke")+"' class='smoke'></div>"
+                    $("#smoke_all").append(smoke)
+                    id_smoke = String("#"+(pos_0+1)+"_"+pos_1+"_smoke")
+                    $(id_smoke).css({
+                        "left": ((wid-390)/2)-2+((pos_0+1)*39)+"px",
+                        "top": 100+(pos_1*39)+"px"
+                    });
+                }
+                if (pos_1-1 >= 0 && check_all(pos_0, pos_1-1) == null) {
+                    smoke = "<div id='"+(pos_0+"_"+(pos_1-1)+"_smoke")+"' class='smoke'></div>"
+                    $("#smoke_all").append(smoke)
+                    id_smoke = String("#"+pos_0+"_"+(pos_1-1)+"_smoke")
+                    $(id_smoke).css({
+                        "left": ((wid-390)/2)-2+(pos_0*39)+"px",
+                        "top": 100+((pos_1-1)*39)+"px"
+                    });
+                }
+                if (pos_1+1 <= 9 && check_all(pos_0, pos_1+1) == null) {
+                    smoke = "<div id='"+(pos_0+"_"+(pos_1+1)+"_smoke")+"' class='smoke'></div>"
+                    $("#smoke_all").append(smoke)
+                    id_smoke = String("#"+pos_0+"_"+(pos_1+1)+"_smoke")
+                    $(id_smoke).css({
+                        "left": ((wid-390)/2)-2+(pos_0*39)+"px",
+                        "top": 100+((pos_1+1)*39)+"px"
+                    });
+                }
+            }
+            setTimeout(() => {
+                for (let i = 0; i < 100; i++) {
+                    setTimeout(() => {
+                        smoke_id = $("#smoke_all").children()[i].id
+                        x_coord = parseInt(smoke_id.split("_")[0]);
+                        y_coord = parseInt(smoke_id.split("_")[1]);
+                        smoke_place(x_coord, y_coord);
+                    }, i**1.4);
+                }
+            }, 1);
+        }
+        setTimeout(() => {
+            near(); 
+        }, 700);
+    })
 </script>
 <style>
     *{
@@ -515,6 +565,17 @@
         font-size: 2em;
         text-align: center;
     }
+    #start{
+        width: 390px;
+        height: 45px;
+        position: fixed;
+        top: 610px;
+        border-radius: 5px;
+        border: 2px solid rgb(231, 216, 0);
+        background-color: rgb(233, 233, 233);
+        font-size: 2em;
+        text-align: center;
+    }
     .block{
         width: 37px;
         height: 37px;
@@ -558,6 +619,19 @@
         margin-right: -2px;
         margin-bottom: -2px;
         z-index: 10;
+    }
+    .smoke{
+        width: 37px;
+        height: 37px;
+        border-radius: 3px;
+        border: 2px solid rgb(185, 185, 185);
+        background-color: rgb(185, 185, 185);
+        position: absolute;
+        margin-right: -2px;
+        margin-bottom: -2px;
+        z-index: 10;
+        opacity: 1;
+        transition: 0.2s;
     }
     .door{
         width: 37px;
