@@ -127,13 +127,13 @@
         }
     }
     $("#restart").click(function(){
-        start_game();
         $("#start").css("width", "390px");
         $("#walls").children().remove();
         $("#smoke_all").children().remove();
         $("#door").children().remove();
         $("#key").children().remove();
         $(".button").attr("class", "block button");
+        start_game();
         $("#win").css({
             "display": "none",
             "opacity": "0"
