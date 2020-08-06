@@ -127,12 +127,21 @@
         }
     }
     $("#restart").click(function(){
-        $("#start").css("width", "390px");
+        $("#start").css({
+            "width": "390px",
+            "opacity": "1",
+            "display": "block",
+            "top": "610px"
+        });
         $("#walls").children().remove();
         $("#smoke_all").children().remove();
         $("#door").children().remove();
         $("#key").children().remove();
         $(".button").attr("class", "block button");
+        $("#text_add_walls").css("display", "block");
+        $("#text_add_door").css("display", "block");
+        $("#text_add_key").css("display", "block");
+        $("#check").css("display", "block");
         start_game();
         $("#win").css({
             "display": "none",
