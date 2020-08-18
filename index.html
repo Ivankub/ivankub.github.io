@@ -186,7 +186,7 @@
         $(".smoke_near").attr("class", "smoke");
         x = parseInt(id.split("_")[0]);
         y = parseInt(id.split("_")[1])
-        if (document.getElementById(x+"_"+y+"_key") == null && document.getElementById(x+"_"+y+"_door") == null || document.getElementById(x+"_"+y+"_wall") == null) {
+        if (document.getElementById(x+"_"+y+"_key") == null && document.getElementById(x+"_"+y+"_door") == null && document.getElementById(x+"_"+y+"_wall") == null) {
             pos[0] = parseInt(id.split("_")[0])
             pos[1] = parseInt(id.split("_")[1])
         }
