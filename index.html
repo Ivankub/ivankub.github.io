@@ -120,53 +120,6 @@
                 $("#"+x+"_"+y+"_smoke").attr("onclick", "smoke_n(id)");
             }
         }
-
-        // function near_smoke() {
-        //     game_is_alredy_start = 1
-        //     if (pos[0]-1 >= 0) {
-        //         x = pos[0]-1
-        //         y = pos[1]
-        //         if (document.getElementById(x+"_"+y+"_smoke") != null) {
-        //             $("#"+x+"_"+y+"_smoke").css({
-        //                 "opacity": "0",
-        //                 "dissplay": "none"
-        //             });
-        //         }
-        //     }
-        //     if (pos[0]+1 <= 9) {
-        //         x = pos[0]+1
-        //         y = pos[1]
-        //         if (document.getElementById(x+"_"+y+"_smoke") != null) {
-        //             $("#"+x+"_"+y+"_smoke").css({
-        //                 "opacity": "0",
-        //                 "dissplay": "none"
-        //             });
-        //         }
-        //     }
-        //     if (pos[1]-1 >= 0) {
-        //         x = pos[0]
-        //         y = pos[1]-1
-        //         if (document.getElementById(x+"_"+y+"_smoke") != null) {
-        //             $("#"+x+"_"+y+"_smoke").css({
-        //                 "opacity": "0",
-        //                 "dissplay": "none"
-        //             });
-        //         }
-        //     }
-        //     if (pos[1]+1 <= 9) {
-        //         x = pos[0]
-        //         y = pos[1]+1
-        //         if (document.getElementById(x+"_"+y+"_smoke") != null) {
-        //             $("#"+x+"_"+y+"_smoke").css({
-        //                 "opacity": "0",
-        //                 "dissplay": "none"
-        //             });
-        //         }
-        //     }
-        // }
-        // if (game_is_alredy_start == 0) {
-        //     near_smoke();
-        // }
     }
     
     $("#restart").click(function(){
@@ -248,17 +201,6 @@
     $(".button").click(function(){
         if ($(this).attr("class") == "block_near button") {
             button_click_n($(this).attr("id"));
-            // $(".block_near").attr("class", "block button");
-            // $(".smoke_near").attr("class", "smoke");
-            
-            // pos[0] = parseInt($(this).attr("id").split("_")[0])
-            // pos[1] = parseInt($(this).attr("id").split("_")[1])
-            // $("#me").css({
-            //     "left": ((wid-390)/2)+(pos[0]*39)+"px",
-            //     "top": 102+(pos[1]*39)+"px"
-            // });
-            // near();
-            // collect();
         }
     });
     function smoke_n(id_this) {
@@ -267,13 +209,6 @@
             $("#"+id_this).css("display", "none");
         }
         button_click_n(id_this);
-        // pos[0] = parseInt($("#"+id_this).attr("id").split("_")[0])
-        // pos[1] = parseInt($("#"+id_this).attr("id").split("_")[1])
-
-        // $("#me").css({
-        //     "left": ((wid-390)/2)+(pos[0]*39)+"px",
-        //     "top": 102+(pos[1]*39)+"px"
-        // });
         function del_near(x, y) {
             $("#"+x+"_"+y+"_smoke").attr("class", "smoke");
         }
