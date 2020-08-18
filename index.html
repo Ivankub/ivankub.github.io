@@ -38,9 +38,11 @@
     let walls = 0
     let w_k_d = 0
     let pos = [0, 0]
+    let pos_b = pos
     let interval = 500
     let time_pass = 0
     let score = 0
+    let game_is_alredy_start = 0
     for (let i = 0; i < 100; i++) {
         let y = Math.trunc(i/10)
         let x = i%10
@@ -87,10 +89,8 @@
             y = pos[1]
             $("#"+x+"_"+y).attr("class", "block_near button");
             if (document.getElementById(x+"_"+y+"_smoke") != null) {
-                $("#"+x+"_"+y+"_smoke").css({
-                    "opacity": "0",
-                    "display": "none"
-                });
+                $("#"+x+"_"+y+"_smoke").attr("class", "smoke_near button");
+                $("#"+x+"_"+y+"_smoke").attr("onclick", "smoke_n(id)");
             }
         }
         if (pos[0]+1 <= 9) {
@@ -98,10 +98,8 @@
             y = pos[1]
             $("#"+x+"_"+y).attr("class", "block_near button");
             if (document.getElementById(x+"_"+y+"_smoke") != null) {
-                $("#"+x+"_"+y+"_smoke").css({
-                    "opacity": "0",
-                    "display": "none"
-                });
+                $("#"+x+"_"+y+"_smoke").attr("class", "smoke_near button");
+                $("#"+x+"_"+y+"_smoke").attr("onclick", "smoke_n(id)");
             }
         }
         if (pos[1]-1 >= 0) {
@@ -109,10 +107,8 @@
             y = pos[1]-1
             $("#"+x+"_"+y).attr("class", "block_near button");
             if (document.getElementById(x+"_"+y+"_smoke") != null) {
-                $("#"+x+"_"+y+"_smoke").css({
-                    "opacity": "0",
-                    "display": "none"
-                });
+                $("#"+x+"_"+y+"_smoke").attr("class", "smoke_near button");
+                $("#"+x+"_"+y+"_smoke").attr("onclick", "smoke_n(id)");
             }
         }
         if (pos[1]+1 <= 9) {
@@ -120,13 +116,59 @@
             y = pos[1]+1
             $("#"+x+"_"+y).attr("class", "block_near button");
             if (document.getElementById(x+"_"+y+"_smoke") != null) {
-                $("#"+x+"_"+y+"_smoke").css({
-                    "opacity": "0",
-                    "display": "none"
-                });
+                $("#"+x+"_"+y+"_smoke").attr("class", "smoke_near button");
+                $("#"+x+"_"+y+"_smoke").attr("onclick", "smoke_n(id)");
             }
         }
+
+        // function near_smoke() {
+        //     game_is_alredy_start = 1
+        //     if (pos[0]-1 >= 0) {
+        //         x = pos[0]-1
+        //         y = pos[1]
+        //         if (document.getElementById(x+"_"+y+"_smoke") != null) {
+        //             $("#"+x+"_"+y+"_smoke").css({
+        //                 "opacity": "0",
+        //                 "dissplay": "none"
+        //             });
+        //         }
+        //     }
+        //     if (pos[0]+1 <= 9) {
+        //         x = pos[0]+1
+        //         y = pos[1]
+        //         if (document.getElementById(x+"_"+y+"_smoke") != null) {
+        //             $("#"+x+"_"+y+"_smoke").css({
+        //                 "opacity": "0",
+        //                 "dissplay": "none"
+        //             });
+        //         }
+        //     }
+        //     if (pos[1]-1 >= 0) {
+        //         x = pos[0]
+        //         y = pos[1]-1
+        //         if (document.getElementById(x+"_"+y+"_smoke") != null) {
+        //             $("#"+x+"_"+y+"_smoke").css({
+        //                 "opacity": "0",
+        //                 "dissplay": "none"
+        //             });
+        //         }
+        //     }
+        //     if (pos[1]+1 <= 9) {
+        //         x = pos[0]
+        //         y = pos[1]+1
+        //         if (document.getElementById(x+"_"+y+"_smoke") != null) {
+        //             $("#"+x+"_"+y+"_smoke").css({
+        //                 "opacity": "0",
+        //                 "dissplay": "none"
+        //             });
+        //         }
+        //     }
+        // }
+        // if (game_is_alredy_start == 0) {
+        //     near_smoke();
+        // }
     }
+    
     $("#restart").click(function(){
         $("#start").css({
             "width": "390px",
@@ -151,6 +193,7 @@
         });
         keys = 0
         doors = 0
+        game_is_alredy_start = 0
     });
     function start_game(){
         wid = parseInt($("body").css("width"))
@@ -185,28 +228,82 @@
     setTimeout(() => {
         start_game();
     }, 1);
+    function button_click_n(id) {
+        $(".block_near").attr("class", "block button");
+        $(".smoke_near").attr("class", "smoke");
+        x = parseInt(id.split("_")[0]);
+        y = parseInt(id.split("_")[1])
+        if (document.getElementById(x+"_"+y+"_key") == null && document.getElementById(x+"_"+y+"_door") == null) {
+            pos[0] = parseInt(id.split("_")[0])
+            pos[1] = parseInt(id.split("_")[1])
+        }
+        
+        $("#me").css({
+            "left": ((wid-390)/2)+(pos[0]*39)+"px",
+            "top": 102+(pos[1]*39)+"px"
+        });
+        near();
+        collect();
+    }
     $(".button").click(function(){
         if ($(this).attr("class") == "block_near button") {
-            $(".block_near").attr("class", "block button");
-            pos[0] = parseInt($(this).attr("id").split("_")[0])
-            pos[1] = parseInt($(this).attr("id").split("_")[1])
-            $("#me").css({
-                "left": ((wid-390)/2)+(pos[0]*39)+"px",
-                "top": 102+(pos[1]*39)+"px"
-            });
-            near();
-            collect();
+            button_click_n($(this).attr("id"));
+            // $(".block_near").attr("class", "block button");
+            // $(".smoke_near").attr("class", "smoke");
+            
+            // pos[0] = parseInt($(this).attr("id").split("_")[0])
+            // pos[1] = parseInt($(this).attr("id").split("_")[1])
+            // $("#me").css({
+            //     "left": ((wid-390)/2)+(pos[0]*39)+"px",
+            //     "top": 102+(pos[1]*39)+"px"
+            // });
+            // near();
+            // collect();
         }
     });
+    function smoke_n(id_this) {
+        console.log("r");
+        if ($("#"+id_this).attr("class") == "smoke_near button") {
+            $("#"+id_this).css("display", "none");
+        }
+        button_click_n(id_this);
+        // pos[0] = parseInt($("#"+id_this).attr("id").split("_")[0])
+        // pos[1] = parseInt($("#"+id_this).attr("id").split("_")[1])
+
+        // $("#me").css({
+        //     "left": ((wid-390)/2)+(pos[0]*39)+"px",
+        //     "top": 102+(pos[1]*39)+"px"
+        // });
+        function del_near(x, y) {
+            $("#"+x+"_"+y+"_smoke").attr("class", "smoke");
+        }
+        if (pos_b[0]+1 <= 9) {
+            del_near(pos_b[0]+1, pos_b[1]);
+        }
+        if (pos_b[0]-1 >= 0) {
+            del_near(pos_b[0]-1, pos_b[1]);
+        }
+        if (pos_b[1]+1 <= 9) {
+            del_near(pos_b[0], pos_b[1]+1);
+        }
+        if (pos_b[1]-1 >= 0) {
+            del_near(pos_b[0], pos_b[1]-1);
+        }
+
+        near();
+        collect();
+    }
     $("#text_add_walls").click(function(){
         if (w_k_d == 0) {
             $(".block_near").attr("class", "block button");
             w_k_d = 1
             $("#text_add_walls").text("DONE");
+            level_is_ok = 0
         }
         else if (w_k_d == 1){
             w_k_d = 0
             $("#text_add_walls").text("ADD WALLS");
+            level_is_ok = 0
             near();
         }
     });
@@ -215,10 +312,12 @@
             $(".block_near").attr("class", "block button");
             w_k_d = 2
             $("#text_add_key").text("DONE");
+            level_is_ok = 0
         }
         else if (w_k_d == 2){
             w_k_d = 0
             $("#text_add_key").text("ADD KEY");
+            level_is_ok = 0
             near();
         }
     });
@@ -227,10 +326,12 @@
             $(".block_near").attr("class", "block button");
             w_k_d = 3
             $("#text_add_door").text("DONE");
+            level_is_ok = 0
         }
         else if (w_k_d == 3){
             w_k_d = 0
             $("#text_add_door").text("ADD DOOR");
+            level_is_ok = 0
             near();
         }
     });
@@ -678,7 +779,7 @@
         display:inline-block;
         margin-right: -2px;
         margin-bottom: -6px;
-        z-index: 1;
+        z-index: 10;
     }
     .wall{
         width: 37px;
@@ -712,6 +813,19 @@
         margin-right: -2px;
         margin-bottom: -2px;
         z-index: 10;
+        opacity: 1;
+        transition: 0.2s;
+    }
+    .smoke_near{
+        width: 37px;
+        height: 37px;
+        border-radius: 3px;
+        border: 2px solid rgb(255, 91, 91);
+        background-color: rgb(185, 185, 185);
+        position: absolute;
+        margin-right: -2px;
+        margin-bottom: -2px;
+        z-index: 100;
         opacity: 1;
         transition: 0.2s;
     }
