@@ -27,7 +27,7 @@
         <div id="start">START</div>
         <div id="win">YOU WIN</div>
         <div id="restart">RESTART</div>
-        <div id="version">v 0.7.42</div>
+        <div id="version">v 0.7.43</div>
     </div>
 </body>
 <script type="text/javascript">
@@ -45,6 +45,7 @@
     let game_is_alredy_start = 0
     let level_is_pased = 0
     let time_speed = 100
+    let timer_func = 0
     for (let i = 0; i < 100; i++) {
         let y = Math.trunc(i/10)
         let x = i%10
@@ -545,7 +546,10 @@
                     $("#start").css("display", "none");
                 }, 1250);
             }, 1000);
-            time_sec();
+            if (timer_func == 0) {
+                time_sec();
+                timer_func = 1;
+            }
             function time_sec(){
                 setTimeout(() => {
                     setInterval(() => {
