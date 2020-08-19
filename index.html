@@ -27,7 +27,7 @@
         <div id="start">START</div>
         <div id="win">YOU WIN</div>
         <div id="restart">RESTART</div>
-        <div id="version">v 0.7.40</div>
+        <div id="version">v 0.7.42</div>
     </div>
 </body>
 <script type="text/javascript">
@@ -117,6 +117,8 @@
         doors = 0
         game_is_alredy_start = 0
         level_is_ok = 0
+        time_pass = 0
+        $("#time").text(time_pass/100);
     });
     function start_game(){
         wid = parseInt($("body").css("width"))
@@ -447,6 +449,7 @@
         let wall_id
         let check_id
         if (level_is_ok == 1) {
+            level_is_pased = 0;
             smoke_place(pos[0], pos[1]);
             function smoke_place(pos_0, pos_1){
                 function get_element_s(x, y){
@@ -542,16 +545,22 @@
                     $("#start").css("display", "none");
                 }, 1250);
             }, 1000);
-            setTimeout(() => {
-                setInterval(() => {
-                    if (level_is_pased == 0) {
-                        time_pass = time_pass + 5;
-                        if (String(time_pass/100).length <= 3) {
-                            $("#time").text(time_pass/100);
+            time_sec();
+            function time_sec(){
+                setTimeout(() => {
+                    setInterval(() => {
+                        if (level_is_pased == 0) {
+                            time_pass = time_pass + 5;
+                            if (String(time_pass/100).length <= 3) {
+                                $("#time").text(time_pass/100);
+                            }
                         }
-                    }
-                }, time_speed/2);
-            }, 550);
+                        else{
+                            return;
+                        }
+                    }, time_speed/2);
+                }, 550);
+            }
             setTimeout(() => {
                 near(); 
             }, 700);
@@ -822,6 +831,6 @@
         bottom: 0.2em;
         right: 0.2em;
     }
-    
+
 </style>
 </html>
