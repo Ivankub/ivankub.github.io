@@ -11,8 +11,8 @@
     <div id="container">
         <div id="pole"></div>
         <div id="me"></div>
-        <div id="time"></div>
-        <div id="score"></div>
+        <div id="main"></div>
+        <div id="time">0</div>
         <div id="collect_k"></div>
         <div id="coins"></div>
         <div id="key"></div>
@@ -20,7 +20,6 @@
         <div id="walls"></div>
         <div id="checkes"></div>
         <div id="smoke_all"></div>
-        <div id="text_game">NEW LEVEL!</div>
         <div id="text_add_walls">ADD WALLS</div>
         <div id="text_add_key">ADD KEY</div>
         <div id="text_add_door">ADD DOOR</div>
@@ -28,14 +27,14 @@
         <div id="start">START</div>
         <div id="win">YOU WIN</div>
         <div id="restart">RESTART</div>
-        <div id="version">v 0.7.27</div>
+        <div id="version">v 0.7.40</div>
     </div>
 </body>
 <script type="text/javascript">
     let level_is_ok = 0
     let keys = 0
     let doors = 0
-    let collect_keys = 0
+    let collect_keys = "NO"
     let walls = 0
     let w_k_d = 0
     let pos = [0, 0]
@@ -44,46 +43,15 @@
     let time_pass = 0
     let score = 0
     let game_is_alredy_start = 0
+    let level_is_pased = 0
+    let time_speed = 100
     for (let i = 0; i < 100; i++) {
         let y = Math.trunc(i/10)
         let x = i%10
         block = "<div id='"+(x+"_"+y)+"' class='block button'></div>"
         $("#pole").append(block)
     }
-    function collect(){
-        for (let i = 0; i < $("#coins").children().length; i++) {
-            let id_coin = $("#coins").children()[i].id
-            if (pos[0] == parseInt(id_coin.split("_")[0]) && pos[1] == parseInt(id_coin.split("_")[1])) {
-                $("#"+(id_coin)).remove()
-                if (score <= 9) {
-                    score = score + 1
-                    $("#score").text(score);
-                }
-                else{
-                    score = 1
-                    $("#score").text(score);
-                    interval = interval - 20;
-                    $("#text_game").css({
-                        "display": "block",
-                        "opacity": "1"
-                    });
-                    setTimeout(() => {
-                        $("#text_game").css({
-                            "display": "block",
-                            "opacity": "0",
-                            "font-size": "4em"
-                        });
-                        setTimeout(() => {
-                            $("#text_game").css({
-                                "display": "none",
-                                "font-size": "2em"
-                            });
-                        }, 1000);
-                    }, 1);
-                }
-            }
-        }
-    }
+    
     function near(){
         if (pos[0]-1 >= 0) {
             x = pos[0]-1
@@ -165,20 +133,20 @@
             "opacity": "0",
             "display": "none"
         });
-        $("#time").css("left", left_pole);
-        $("#score").css("left", left_score);
+        $("#main").css("left", left_pole);
+        $("#time").css("left", left_score);
         $("#collect_k").css("left", left_pole);
         $("#check").css("left", left_pole_2);
         $("#pole").css("top", "100px");
         $("#score").text(score);
-        $("#collect_k").text(collect_keys+" key");
+        $("#collect_k").text(collect_keys);
         pos[0] = Math.floor(Math.random() * (10));
         pos[1] = Math.floor(Math.random() * (10));
         $("#me").css({
             "left": ((wid-390)/2)+(pos[0]*39)+"px",
             "top": 102+(pos[1]*39)+"px"
         });
-        near();
+        // near();
     }
     setTimeout(() => {
         start_game();
@@ -206,7 +174,6 @@
         }
     });
     function smoke_n(id_this) {
-        console.log("r");
         if ($("#"+id_this).attr("class") == "smoke_near button") {
             $("#"+id_this).css("display", "none");
         }
@@ -242,7 +209,7 @@
             w_k_d = 0
             $("#text_add_walls").text("ADD WALLS");
             level_is_ok = 0
-            near();
+            //near();
         }
     });
     $("#text_add_key").click(function(){
@@ -256,7 +223,7 @@
             w_k_d = 0
             $("#text_add_key").text("ADD KEY");
             level_is_ok = 0
-            near();
+            //near();
         }
     });
     $("#text_add_door").click(function(){
@@ -270,7 +237,7 @@
             w_k_d = 0
             $("#text_add_door").text("ADD DOOR");
             level_is_ok = 0
-            near();
+            //near();
         }
     });
     $(".block").click(function(){
@@ -341,8 +308,8 @@
             if (okey == 1) {
                 $("#"+id).remove()
                 keys = 1
-                collect_keys = 1
-                $("#collect_k").text(collect_keys+" key");
+                collect_keys = "Yes"
+                $("#collect_k").text(collect_keys);
             }
         }
     };
@@ -352,7 +319,7 @@
             doors = 0
         }
         else if (w_k_d == 0) {
-            if (collect_keys == 1) {
+            if (collect_keys == "Yes") {
                 okey = 0
                 for (let i = 0; i < $(".block_near").length; i++) {
                     id_block = $(".block_near:eq("+i+")").attr("id");
@@ -362,7 +329,9 @@
                     }
                 }
                 if (okey == 1) {
+                    level_is_pased = 1
                     $("#win").css("display", "block");
+                    $("#win").text("YOU WIN in "+time_pass/100+"sec")
                     $(".door").css("background-image", "url('images/door_128.png')");
                     setTimeout(() => {
                         $("#win").css("opacity", "1");
@@ -371,10 +340,10 @@
                     setTimeout(() => {
                         $("#restart").css("opacity", "1");
                     }, 2000);
-                    collect_keys = 0
+                    collect_keys = "No"
                 }
             }
-            $("#collect_k").text(collect_keys+" key");
+            $("#collect_k").text(collect_keys);
         }
     };
     $("#check").click(function(){
@@ -573,13 +542,24 @@
                     $("#start").css("display", "none");
                 }, 1250);
             }, 1000);
+            setTimeout(() => {
+                setInterval(() => {
+                    if (level_is_pased == 0) {
+                        time_pass = time_pass + 5;
+                        if (String(time_pass/100).length <= 3) {
+                            $("#time").text(time_pass/100);
+                        }
+                    }
+                }, time_speed/2);
+            }, 550);
+            setTimeout(() => {
+                near(); 
+            }, 700);
         }
         else{
             alert("CHECK YOUR LEVEL!")
         }
-        setTimeout(() => {
-            near(); 
-        }, 700);
+        
     })
 </script>
 <style>
@@ -593,15 +573,6 @@
         position: absolute;
     }
     #time{
-        width: 390px;
-        height: 90px;
-        position: fixed;
-        border-radius: 5px;
-        border: 2px solid black;
-        font-size: 2em;
-        text-align: center;
-    }
-    #score{
         width: 200px;
         height: 45px;
         position: fixed;
@@ -610,6 +581,16 @@
         border: 2px solid rgb(41, 41, 41);
         font-size: 2.2em;
         text-align: center;
+        
+    }
+    #main{
+        width: 390px;
+        height: 90px;
+        position: fixed;
+        border-radius: 5px;
+        border: 2px solid black;
+        font-size: 2em;
+        text-align: left;
     }
     #collect_k{
         width: 80px;
@@ -819,19 +800,6 @@
         margin-right: -2px;
         margin-bottom: -2px;
         z-index: 10;
-    }
-    #text_game{
-        font-size: 2em;
-        width: 100vw;
-        color: rgb(22, 0, 95);
-        text-shadow: 0px 3px 0px black;
-        opacity: 0;
-        display: none;
-        position: fixed;
-        top: 250px;
-        left: 0;
-        text-align: center;
-        transition: 1s;
     }
     #win{
         position: fixed;
