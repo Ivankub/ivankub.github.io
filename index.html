@@ -27,7 +27,7 @@
         <div id="start">START</div>
         <div id="win">YOU WIN</div>
         <div id="restart">RESTART</div>
-        <div id="version">v 0.7.43</div>
+        <div id="version">v 0.7.52</div>
     </div>
 </body>
 <script type="text/javascript">
@@ -44,6 +44,7 @@
     let score = 0
     let game_is_alredy_start = 0
     let level_is_pased = 0
+    let level_is_started = 0
     let time_speed = 100
     let timer_func = 0
     for (let i = 0; i < 100; i++) {
@@ -54,6 +55,7 @@
     }
     
     function near(){
+        level_is_ok = 0;
         if (pos[0]-1 >= 0) {
             x = pos[0]-1
             y = pos[1]
@@ -149,7 +151,7 @@
             "left": ((wid-390)/2)+(pos[0]*39)+"px",
             "top": 102+(pos[1]*39)+"px"
         });
-        // near();
+        near();
     }
     setTimeout(() => {
         start_game();
@@ -169,7 +171,7 @@
             "top": 102+(pos[1]*39)+"px"
         });
         near();
-        collect();
+        
     }
     $(".button").click(function(){
         if ($(this).attr("class") == "block_near button") {
@@ -179,31 +181,34 @@
     function smoke_n(id_this) {
         if ($("#"+id_this).attr("class") == "smoke_near button") {
             $("#"+id_this).css("display", "none");
+            $("#"+id_this).removeAttr("onclick");
+            button_click_n(id_this);
+            function del_near(x, y) {
+                $("#"+x+"_"+y+"_smoke").attr("class", "smoke");
+            }
+            if (pos_b[0]+1 <= 9) {
+                del_near(pos_b[0]+1, pos_b[1]);
+            }
+            if (pos_b[0]-1 >= 0) {
+                del_near(pos_b[0]-1, pos_b[1]);
+            }
+            if (pos_b[1]+1 <= 9) {
+                del_near(pos_b[0], pos_b[1]+1);
+            }
+            if (pos_b[1]-1 >= 0) {
+                del_near(pos_b[0], pos_b[1]-1);
+            }
+            pos_b[0] = pos[0]
+            pos_b[1] = pos[1]
+            near();
+            
         }
-        button_click_n(id_this);
-        function del_near(x, y) {
-            $("#"+x+"_"+y+"_smoke").attr("class", "smoke");
-        }
-        if (pos_b[0]+1 <= 9) {
-            del_near(pos_b[0]+1, pos_b[1]);
-        }
-        if (pos_b[0]-1 >= 0) {
-            del_near(pos_b[0]-1, pos_b[1]);
-        }
-        if (pos_b[1]+1 <= 9) {
-            del_near(pos_b[0], pos_b[1]+1);
-        }
-        if (pos_b[1]-1 >= 0) {
-            del_near(pos_b[0], pos_b[1]-1);
-        }
-        pos_b[0] = pos[0]
-        pos_b[1] = pos[1]
-        near();
-        collect();
     }
     $("#text_add_walls").click(function(){
-        if (w_k_d == 0) {
+        if (w_k_d != 1) {
             $(".block_near").attr("class", "block button");
+            $("#text_add_key").text("ADD KEY");
+            $("#text_add_door").text("ADD DOOR");
             w_k_d = 1
             $("#text_add_walls").text("DONE");
             level_is_ok = 0
@@ -212,12 +217,14 @@
             w_k_d = 0
             $("#text_add_walls").text("ADD WALLS");
             level_is_ok = 0
-            //near();
+            near();
         }
     });
     $("#text_add_key").click(function(){
-        if (w_k_d == 0) {
+        if (w_k_d != 2) {
             $(".block_near").attr("class", "block button");
+            $("#text_add_door").text("ADD DOOR");
+            $("#text_add_walls").text("ADD WALLS");
             w_k_d = 2
             $("#text_add_key").text("DONE");
             level_is_ok = 0
@@ -226,12 +233,14 @@
             w_k_d = 0
             $("#text_add_key").text("ADD KEY");
             level_is_ok = 0
-            //near();
+            near();
         }
     });
     $("#text_add_door").click(function(){
-        if (w_k_d == 0) {
+        if (w_k_d != 3) {
             $(".block_near").attr("class", "block button");
+            $("#text_add_key").text("ADD KEY");
+            $("#text_add_walls").text("ADD WALLS");
             w_k_d = 3
             $("#text_add_door").text("DONE");
             level_is_ok = 0
@@ -240,7 +249,7 @@
             w_k_d = 0
             $("#text_add_door").text("ADD DOOR");
             level_is_ok = 0
-            //near();
+            near();
         }
     });
     $(".block").click(function(){
@@ -249,13 +258,39 @@
             pos_0 = pos_b.split("_")[0]
             pos_1 = pos_b.split("_")[1]
             if (pos[0] != pos_0 || pos[1] != pos_1) {
-                wall = "<div id='"+(pos_0+"_"+pos_1+"_wall")+"' class='wall' onclick='wall_click(id)'></div>"
-                $("#walls").append(wall)
-                id_wall = String("#"+pos_0+"_"+pos_1+"_wall")
-                $(id_wall).css({
-                    "left": ((wid-390)/2)-2+(pos_0*39)+"px",
-                    "top": 100+(pos_1*39)+"px"
-                });
+                function check_wall(pos_0, pos_1){
+                    fat_wall = 0
+                    function fat_w_ch(x, y) {
+                        return document.getElementById(x+"_"+y+"_wall");
+                    }
+                    if (fat_w_ch(pos_0-1, pos_1-1) != null && fat_w_ch(pos_0, pos_1-1) != null && fat_w_ch(pos_0-1, pos_1) != null) {
+                        fat_wall = 1;
+                    }
+                    if (fat_w_ch(pos_0+1, pos_1+1) != null && fat_w_ch(pos_0, pos_1+1) != null && fat_w_ch(pos_0+1, pos_1) != null) {
+                        fat_wall = 1;
+                    }
+                    if (fat_w_ch(pos_0+1, pos_1-1) != null && fat_w_ch(pos_0, pos_1-1) != null && fat_w_ch(pos_0+1, pos_1) != null) {
+                        fat_wall = 1;
+                    }
+                    if (fat_w_ch(pos_0-1, pos_1+1) != null && fat_w_ch(pos_0, pos_1+1) != null && fat_w_ch(pos_0-1, pos_1) != null) {
+                        fat_wall = 1;
+                    }
+                    return fat_wall;
+                }
+                
+
+                if (check_wall(parseInt(pos_0), parseInt(pos_1)) == 0) {
+                    wall = "<div id='"+(pos_0+"_"+pos_1+"_wall")+"' class='wall' onclick='wall_click(id)'></div>"
+                    $("#walls").append(wall)
+                    id_wall = String("#"+pos_0+"_"+pos_1+"_wall")
+                    $(id_wall).css({
+                        "left": ((wid-390)/2)-2+(pos_0*39)+"px",
+                        "top": 100+(pos_1*39)+"px"
+                    });
+                }
+                else{
+                    alert("YOU CAN'T DO FAT WALLS!❌")
+                }
             }
         }
         else if (w_k_d == 2 && $(this).attr("class") == "block button") {
@@ -299,7 +334,7 @@
             $("#"+id).remove()
             keys = 0
         }
-        else if (w_k_d == 0) {
+        else if (w_k_d == 0 && level_is_started == 1) {
             okey = 0
             for (let i = 0; i < $(".block_near").length; i++) {
                 id_block = $(".block_near:eq("+i+")").attr("id");
@@ -449,8 +484,9 @@
     $("#start").click(function(){
         let wall_id
         let check_id
-        if (level_is_ok == 1) {
+        if (level_is_ok == 1 && w_k_d == 0) {
             level_is_pased = 0;
+            level_is_started = 1;
             smoke_place(pos[0], pos[1]);
             function smoke_place(pos_0, pos_1){
                 function get_element_s(x, y){
@@ -569,8 +605,11 @@
                 near(); 
             }, 700);
         }
-        else{
-            alert("CHECK YOUR LEVEL!")
+        else if (level_is_ok != 1) {
+            alert("CHECK YOUR LEVEL!❌")
+        }
+        else if (w_k_d != 0) {
+            alert("YOU NOW IN CONSTRUСTOR MODE!❌")
         }
         
     })
@@ -834,6 +873,7 @@
         position: fixed;
         bottom: 0.2em;
         right: 0.2em;
+        z-index: 9999;
     }
 
 </style>
