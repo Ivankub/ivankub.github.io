@@ -27,7 +27,7 @@
         <div id="start">START</div>
         <div id="win">YOU WIN</div>
         <div id="restart">RESTART</div>
-        <div id="version">v 0.8.10</div>
+        <div id="version">v 0.8.12</div>
     </div>
 </body>
 <script type="text/javascript">
@@ -181,18 +181,18 @@
                     if (document.getElementById(pos_x_n+"_"+pos_y_n+"_key") == null && document.getElementById(pos_x_n+"_"+pos_y_n+"_door") == null && document.getElementById(pos_x_n+"_"+pos_y_n+"_wall") == null && pos_x_n >= 0 && pos_x_n <= 9 && pos_y_n >= 0 && pos_y_n <= 9) {
                         pos[0] = pos_x_n;
                         pos[1] = pos_y_n;
-                        remove_smoke_n(pos[0]+"_"+pos[1]+"_smoke");
+                        remove_smoke_n((pos[0]+x_mod)+"_"+(pos[1]+y_mod)+"_smoke");
                         while_walk();
                     }
                     else if (document.getElementById(pos_x_n+"_"+pos_y_n+"_key") != null && level_is_started == 1){
                         key_click("near_"+pos_x_n+"_"+pos_y_n);
-                        remove_smoke_n(pos[0]+"_"+pos[1]+"_smoke");
+                        remove_smoke_n((pos[0]+x_mod)+"_"+(pos[1]+y_mod)+"_smoke");
                         while_walk();
                     }
                     else if (document.getElementById(pos_x_n+"_"+pos_y_n+"_key") != null){
                         pos[0] = pos_x_n;
                         pos[1] = pos_y_n;
-                        remove_smoke_n(pos[0]+"_"+pos[1]+"_smoke");
+                        remove_smoke_n((pos[0]+x_mod)+"_"+(pos[1]+y_mod)+"_smoke");
                         while_walk();
                     }
                     else{
@@ -1070,8 +1070,8 @@
     }
     #version{
         position: fixed;
-        bottom: 0.2em;
-        right: 0.2em;
+        bottom: 0.4em;
+        right: 0.4em;
         z-index: 9999;
     }
 
