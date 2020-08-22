@@ -27,7 +27,7 @@
         <div id="start">START</div>
         <div id="win">YOU WIN</div>
         <div id="restart">RESTART</div>
-        <div id="version">v 0.7.61</div>
+        <div id="version">v 0.8.10</div>
     </div>
 </body>
 <script type="text/javascript">
@@ -161,21 +161,54 @@
         start_game();
     }, 1);
     function button_click_n(id) {
-        $(".block_near").attr("class", "block button");
-        $(".smoke_near").attr("class", "smoke");
+        let walk_ok = 1;
         x = parseInt(id.split("_")[0]);
-        y = parseInt(id.split("_")[1])
-        if (document.getElementById(x+"_"+y+"_key") == null && document.getElementById(x+"_"+y+"_door") == null && document.getElementById(x+"_"+y+"_wall") == null) {
-            pos[0] = parseInt(id.split("_")[0])
-            pos[1] = parseInt(id.split("_")[1])
+        y = parseInt(id.split("_")[1]);
+        x_mod = x-pos[0];
+        y_mod = y-pos[1];
+        pos_x_n = pos[0]+x_mod;
+        pos_y_n = pos[1]+y_mod;
+        function while_walk() {
+            setTimeout(() => {
+                if (walk_ok == 1) {
+                    $(".block_near").attr("class", "block button");
+                    $(".smoke_near").attr("class", "smoke");
+                    function remove_smoke_n(id) {
+                        $("#"+id).attr("class", "smoke");
+                        $("#"+id).css("display", "none");
+                        $("#"+id).removeAttr("onclick");
+                    }
+                    if (document.getElementById(pos_x_n+"_"+pos_y_n+"_key") == null && document.getElementById(pos_x_n+"_"+pos_y_n+"_door") == null && document.getElementById(pos_x_n+"_"+pos_y_n+"_wall") == null && pos_x_n >= 0 && pos_x_n <= 9 && pos_y_n >= 0 && pos_y_n <= 9) {
+                        pos[0] = pos_x_n;
+                        pos[1] = pos_y_n;
+                        remove_smoke_n(pos[0]+"_"+pos[1]+"_smoke");
+                        while_walk();
+                    }
+                    else if (document.getElementById(pos_x_n+"_"+pos_y_n+"_key") != null && level_is_started == 1){
+                        key_click("near_"+pos_x_n+"_"+pos_y_n);
+                        remove_smoke_n(pos[0]+"_"+pos[1]+"_smoke");
+                        while_walk();
+                    }
+                    else if (document.getElementById(pos_x_n+"_"+pos_y_n+"_key") != null){
+                        pos[0] = pos_x_n;
+                        pos[1] = pos_y_n;
+                        remove_smoke_n(pos[0]+"_"+pos[1]+"_smoke");
+                        while_walk();
+                    }
+                    else{
+                        walk_ok = 0;
+                        near();
+                    }
+                    pos_x_n = pos[0]+x_mod;
+                    pos_y_n = pos[1]+y_mod;
+                }
+                $("#me").css({
+                    "left": ((wid-390)/2)+(pos[0]*39)+"px",
+                    "top": 102+(pos[1]*39)+"px"
+                });
+            }, 100);
         }
-        
-        $("#me").css({
-            "left": ((wid-390)/2)+(pos[0]*39)+"px",
-            "top": 102+(pos[1]*39)+"px"
-        });
-        near();
-        
+        while_walk();
     }
     $(".button").click(function(){
         if ($(this).attr("class") == "block_near button") {
@@ -205,7 +238,6 @@
             pos_b[0] = pos[0]
             pos_b[1] = pos[1]
             near();
-            
         }
     }
     $("#text_add_walls").click(function(){
@@ -339,19 +371,28 @@
             keys = keys-1
         }
         else if (w_k_d == 0 && level_is_started == 1) {
-            okey = 0
-            for (let i = 0; i < $(".block_near").length; i++) {
-                id_block = $(".block_near:eq("+i+")").attr("id");
-                id_key = id;
-                if (id_block.split("_")[0] == id_key.split("_")[0] && id_block.split("_")[1] == id_key.split("_")[1]) {
-                    okey = 1
-                }
-            }
-            if (okey == 1) {
-                $("#"+id).remove()
+            if (id.split("_")[0] == "near") {
+                id_key_now = id.split("_")[1]+"_"+id.split("_")[2]+"_key"
+                $("#"+id_key_now).remove()
                 keys = keys-1
                 collect_keys = collect_keys+1
                 $("#collect_k").text(collect_keys);
+            }
+            else{
+                okey = 0
+                for (let i = 0; i < $(".block_near").length; i++) {
+                    id_block = $(".block_near:eq("+i+")").attr("id");
+                    id_key = id;
+                    if (id_block.split("_")[0] == id_key.split("_")[0] && id_block.split("_")[1] == id_key.split("_")[1]) {
+                        okey = 1
+                    }
+                }
+                if (okey == 1) {
+                    $("#"+id).remove()
+                    keys = keys-1
+                    collect_keys = collect_keys+1
+                    $("#collect_k").text(collect_keys);
+                }
             }
         }
     };
@@ -402,14 +443,14 @@
         let door_id;
         key_is = 0;
         door_is = 0;
-        checker_place(pos[0], pos[1]);
-        function checker_place(pos_0, pos_1){
+        checker_place_first(pos[0], pos[1]);
+        function checker_place_first(pos_0, pos_1, napr){
             function get_element(x, y){
                 wall_id = document.getElementById(x+"_"+y+"_wall")
                 return wall_id
             }
-            function get_element_c(x, y){
-                check_id = document.getElementById(x+"_"+y+"_checker")
+            function get_element_c(x, y, napravl){
+                check_id = document.getElementById(x+"_"+y+"_checker_"+napravl)
                 return check_id
             }
             function get_element_k(x, y){
@@ -433,11 +474,11 @@
                     return 1
                 }
             }
-            function check_all(pos_x, pos_y) {
+            function check_all(pos_x, pos_y, naprav) {
                 ok = null
                 door_check = get_element_d(pos_x, pos_y);
                 key_check = get_element_k(pos_x, pos_y);
-                if (get_element(pos_x, pos_y) != null || get_element_c(pos_x, pos_y) != null || door_check != null) {
+                if (get_element(pos_x, pos_y) != null || get_element_c(pos_x, pos_y, naprav) != null || door_check != null) {
                     ok = "no_ok"
                 }
                 if (key_check != null) {
@@ -452,51 +493,175 @@
                 }
                 return ok
             }
-            if (pos_0-1 >= 0 && check_all(pos_0-1, pos_1) == null) {
-                checker = "<div id='"+((pos_0-1)+"_"+pos_1+"_checker")+"' class='checker'></div>"
+            if (pos_0-1 >= 0 && check_all(pos_0-1, pos_1, "left") == null) {
+                checker = "<div id='"+((pos_0-1)+"_"+pos_1+"_checker_left")+"' class='checker'></div>"
                 $("#checkes").append(checker)
-                id_checker = String("#"+(pos_0-1)+"_"+pos_1+"_checker")
+                id_checker = String("#"+(pos_0-1)+"_"+pos_1+"_checker_left")
                 $(id_checker).css({
                     "left": ((wid-390)/2)-2+((pos_0-1)*39)+"px",
                     "top": 100+(pos_1*39)+"px"
                 });
             }
-            if (pos_0+1 <= 9 && check_all(pos_0+1, pos_1) == null) {
-                checker = "<div id='"+((pos_0+1)+"_"+pos_1+"_checker")+"' class='checker'></div>"
+            if (pos_0+1 <= 9 && check_all(pos_0+1, pos_1, "right") == null) {
+                checker = "<div id='"+((pos_0+1)+"_"+pos_1+"_checker_right")+"' class='checker'></div>"
                 $("#checkes").append(checker)
-                id_checker = String("#"+(pos_0+1)+"_"+pos_1+"_checker")
+                id_checker = String("#"+(pos_0+1)+"_"+pos_1+"_checker_right")
                 $(id_checker).css({
                     "left": ((wid-390)/2)-2+((pos_0+1)*39)+"px",
                     "top": 100+(pos_1*39)+"px"
                 });
             }
-            if (pos_1-1 >= 0 && check_all(pos_0, pos_1-1) == null) {
-                checker = "<div id='"+(pos_0+"_"+(pos_1-1)+"_checker")+"' class='checker'></div>"
+            if (pos_1-1 >= 0 && check_all(pos_0, pos_1-1, "top") == null) {
+                checker = "<div id='"+(pos_0+"_"+(pos_1-1)+"_checker_top")+"' class='checker'></div>"
                 $("#checkes").append(checker)
-                id_checker = String("#"+pos_0+"_"+(pos_1-1)+"_checker")
+                id_checker = String("#"+pos_0+"_"+(pos_1-1)+"_checker_top")
                 $(id_checker).css({
                     "left": ((wid-390)/2)-2+(pos_0*39)+"px",
                     "top": 100+((pos_1-1)*39)+"px"
                 });
             }
-            if (pos_1+1 <= 9 && check_all(pos_0, pos_1+1) == null) {
-                checker = "<div id='"+(pos_0+"_"+(pos_1+1)+"_checker")+"' class='checker'></div>"
+            if (pos_1+1 <= 9 && check_all(pos_0, pos_1+1, "down") == null) {
+                checker = "<div id='"+(pos_0+"_"+(pos_1+1)+"_checker_down")+"' class='checker'></div>"
                 $("#checkes").append(checker)
-                id_checker = String("#"+pos_0+"_"+(pos_1+1)+"_checker")
+                id_checker = String("#"+pos_0+"_"+(pos_1+1)+"_checker_down")
                 $(id_checker).css({
                     "left": ((wid-390)/2)-2+(pos_0*39)+"px",
                     "top": 100+((pos_1+1)*39)+"px"
                 });
             }
         }
+        //////////////////////////////////////////////////
+        function checker_place(pos_0, pos_1, napr){
+            function get_element(x, y){
+                wall_id = document.getElementById(x+"_"+y+"_wall")
+                return wall_id
+            }
+            function get_element_c(x, y, napravl){
+                check_id = document.getElementById(x+"_"+y+"_checker_"+napravl)
+                return check_id
+            }
+            function get_element_k(x, y){
+                key_id = document.getElementById(x+"_"+y+"_key");
+                if ($("#"+x+"_"+y+"_key").attr("class") != "key checked") {
+                    $("#"+x+"_"+y+"_key").addClass("checked");
+                    return key_id;
+                }
+                else{
+                    return 1
+                }
+                
+            }
+            function get_element_d(x, y){
+                door_id = document.getElementById(x+"_"+y+"_door");
+                if ($("#"+x+"_"+y+"_door").attr("class") != "door checked") {
+                    $("#"+x+"_"+y+"_door").addClass("checked");
+                    return door_id;
+                }
+                else{
+                    return 1
+                }
+            }
+            function check_all(pos_x, pos_y, naprav) {
+                ok = null
+                door_check = get_element_d(pos_x, pos_y);
+                key_check = get_element_k(pos_x, pos_y);
+                if (get_element(pos_x, pos_y) != null || get_element_c(pos_x, pos_y, naprav) != null || door_check != null) {
+                    ok = "no_ok"
+                }
+                if (key_check != null) {
+                    if (key_check != 1) {
+                        is_key = is_key + 1
+                    }
+                }
+                if (door_check != null) {
+                    if (door_check != 1) {
+                        is_door = is_door + 1
+                    }
+                }
+                return ok
+            }
+            
+            if (pos_0-1 >= 0 && check_all(pos_0-1, pos_1, "left") == null && napr == "left") {
+                checker = "<div id='"+((pos_0-1)+"_"+pos_1+"_checker_left")+"' class='checker'></div>"
+                $("#checkes").append(checker)
+                id_checker = String("#"+(pos_0-1)+"_"+pos_1+"_checker_left")
+                $(id_checker).css({
+                    "left": ((wid-390)/2)-2+((pos_0-1)*39)+"px",
+                    "top": 100+(pos_1*39)+"px"
+                });
+            }
+            if ((pos_0-1 < 0 || check_all(pos_0-1, pos_1, "left") != null) && get_element_c(pos_0-1, pos_1, "left") == null && napr == "left"){
+                $(String("#"+pos_0+"_"+pos_1+"_checker_left")).attr("id", pos_0+"_"+pos_1+"_checker_active");
+            }
+            
+            if (pos_0+1 <= 9 && check_all(pos_0+1, pos_1, "right") == null && napr == "right") {
+                checker = "<div id='"+((pos_0+1)+"_"+pos_1+"_checker_right")+"' class='checker'></div>"
+                $("#checkes").append(checker)
+                id_checker = String("#"+(pos_0+1)+"_"+pos_1+"_checker_right")
+                $(id_checker).css({
+                    "left": ((wid-390)/2)-2+((pos_0+1)*39)+"px",
+                    "top": 100+(pos_1*39)+"px"
+                });
+            }
+            if ((pos_0+1 == 10 || check_all(pos_0+1, pos_1, "right") != null) && get_element_c(pos_0+1, pos_1, "right") == null && napr == "right"){
+                $(String("#"+pos_0+"_"+pos_1+"_checker_right")).attr("id", pos_0+"_"+pos_1+"_checker_active");
+            }
+            
+            if (pos_1-1 >= 0 && check_all(pos_0, pos_1-1, "top") == null && napr == "top") {
+                checker = "<div id='"+(pos_0+"_"+(pos_1-1)+"_checker_top")+"' class='checker'></div>"
+                $("#checkes").append(checker)
+                id_checker = String("#"+pos_0+"_"+(pos_1-1)+"_checker_top")
+                $(id_checker).css({
+                    "left": ((wid-390)/2)-2+(pos_0*39)+"px",
+                    "top": 100+((pos_1-1)*39)+"px"
+                });
+            }
+            if ((pos_1-1 < 0 || check_all(pos_0, pos_1-1, "top") != null) && get_element_c(pos_0, pos_1-1, "top") == null && napr == "top"){
+                $(String("#"+pos_0+"_"+pos_1+"_checker_top")).attr("id", pos_0+"_"+pos_1+"_checker_active");
+            }
+            
+            if (pos_1+1 <= 9 && check_all(pos_0, pos_1+1, "down") == null && napr == "down") {
+                checker = "<div id='"+(pos_0+"_"+(pos_1+1)+"_checker_down")+"' class='checker'></div>"
+                $("#checkes").append(checker)
+                id_checker = String("#"+pos_0+"_"+(pos_1+1)+"_checker_down")
+                $(id_checker).css({
+                    "left": ((wid-390)/2)-2+(pos_0*39)+"px",
+                    "top": 100+((pos_1+1)*39)+"px"
+                });
+            }
+            if ((pos_1+1 == 10 || check_all(pos_0, pos_1+1, "down") != null) && get_element_c(pos_0, pos_1+1, "down") == null && napr == "down"){
+                $(String("#"+pos_0+"_"+pos_1+"_checker_down")).attr("id", pos_0+"_"+pos_1+"_checker_active");
+            }
+        }
         setTimeout(() => {
-            for (let i = 0; i < 100-$("#walls").length; i++) {
+            for (let j = 0; j < 100; j++) {
                 setTimeout(() => {
-                    check_id = $("#checkes").children()[i].id
-                    x_coord = parseInt(check_id.split("_")[0]);
-                    y_coord = parseInt(check_id.split("_")[1]);
-                    checker_place(x_coord, y_coord);
-                }, i*2);
+                    for (let i = 0; i < 500-$("#walls").length; i++) {
+                        check_id = $("#checkes").children()[i].id
+                        // console.log(i);
+                        // console.log($("#checkes").children()[i]);
+                        x_coord = parseInt(check_id.split("_")[0]);
+                        y_coord = parseInt(check_id.split("_")[1]);
+                        napravleniye = check_id.split("_")[3];
+                        if (napravleniye != "active") {
+                            checker_place(x_coord, y_coord, napravleniye);
+                        }
+                        else{
+                            checker_place_first(x_coord, y_coord);
+                        }
+                    }
+                    setTimeout(() => {
+                        for (let i = 0; i < 500-$("#walls").length; i++) {
+                            check_id = $("#checkes").children()[i].id
+                            x_coord = parseInt(check_id.split("_")[0]);
+                            y_coord = parseInt(check_id.split("_")[1]);
+                            napravleniye = check_id.split("_")[3];
+                            if (napravleniye == "active") {
+                                checker_place_first(x_coord, y_coord);
+                            }
+                        } 
+                    }, 25);
+                }, j*50);
             }
         }, 1);
         setTimeout(() => {
@@ -513,7 +678,7 @@
                 $(".key").removeClass("checked");
             }
             $("#checkes").children().remove()
-        }, 500);
+        }, 1000);
     });
     $("#start").click(function(){
         let wall_id
