@@ -30,7 +30,7 @@
         <div id="check_wait">CHECKING LEVEL. PLESE WAIT!</div>
         <div id="win">YOU WIN</div>
         <div id="restart">RESTART</div>
-        <div id="version">v 0.8.30</div>
+        <div id="version">v 0.8.31</div>
     </div>
 </body>
 <script type="text/javascript">
@@ -852,6 +852,12 @@
         }, 2000);
     });
     $("#start").click(function(){
+        if (w_k_d != 0){
+            w_k_d = 0;
+            $("#text_add_key").text("ADD KEY");
+            $("#text_add_walls").text("ADD WALLS");
+            $("#text_add_door").text("ADD DOOR");
+        }
         let wall_id
         let check_id
         if (level_is_ok == 1 && w_k_d == 0) {
@@ -990,10 +996,9 @@
         else if (level_is_ok != 1) {
             alert("CHECK YOUR LEVEL!❌")
         }
-        else if (w_k_d != 0) {
-            alert("YOU NOW IN CONSTRUСTOR MODE!❌")
-        }
-        
+        // else if (w_k_d != 0) {
+        //     alert("YOU NOW IN CONSTRUСTOR MODE!❌")
+        // }
     })
 </script>
 <style>
