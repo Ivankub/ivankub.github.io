@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,10 +27,12 @@
         <div id="text_add_door">ADD DOOR</div>
         <div id="check">CHECK</div>
         <div id="start">START</div>
+        <div id="generate">GENERATE</div>
+        <div id="generate_noise">GENERATE NOISE</div>
         <div id="check_wait">CHECKING LEVEL. PLESE WAIT!</div>
         <div id="win">YOU WIN</div>
         <div id="restart">RESTART</div>
-        <div id="version">v 0.8.31</div>
+        <div id="version">v 0.9.5</div>
     </div>
 </body>
 <script type="text/javascript">
@@ -110,6 +112,10 @@
             "top": "610px",
             "font-size": "2em"
         });
+        $("#generate").css({
+            "display": "block",
+            "opacity": "1"
+        });
         $("#walls").children().remove();
         $("#smoke_all").children().remove();
         $("#door").children().remove();
@@ -129,12 +135,16 @@
         doors = 0
         game_is_alredy_start = 0
         level_is_ok = 0
+        level_is_started = 0
+        level_is_pased = 0
         time_pass = 0
         time_pass_hod = 0
         hodov = 0
+        is_break = 1
         $("#collect_k").text(collect_keys);
         $("#time").text(time_pass/100);
         $("#time_hod").text(time_pass/100);
+        $("#hod").text(hodov);
     });
     function start_game(){
         wid = parseInt($("body").css("width"))
@@ -146,6 +156,11 @@
         $("#text_add_key").css("left", left_pole_2);
         $("#text_add_door").css("left", left_pole);
         $("#start").css("left", left_pole);
+        $("#generate").css("left", left_pole);
+        $("#generate_noise").css({
+            "left": left_pole,
+            "display": "none"
+        });
         $("#restart").css({
             "left": left_pole,
             "opacity": "0",
@@ -235,7 +250,6 @@
     });
     function smoke_n(id_this) {
         if ($("#"+id_this).attr("class") == "smoke_near button") {
-            hodov = hodov + 1;
             $("#"+id_this).css("display", "none");
             $("#"+id_this).removeAttr("onclick");
             button_click_n(id_this);
@@ -939,6 +953,7 @@
                     "top": "500px",
                     "height": "100px"
                 });
+                $("#generate").css("opacity", "0");
                 setTimeout(() => {
                     $("#text_add_door").css("display", "none");
                     $("#check").css("display", "none");
@@ -947,6 +962,7 @@
                 setTimeout(() => {
                     $("#text_add_walls").css("display", "none");
                     $("#text_add_key").css("display", "none");
+                    $("#generate").css("display", "none");
                 }, 500);
                 setTimeout(() => {
                     $("#start").css({
@@ -966,25 +982,27 @@
             function time_sec(){
                 setTimeout(() => {
                     setInterval(() => {
-                        if (level_is_pased == 0 && is_break == 1 && time_pass < 3000) {
-                            time_pass = time_pass + 5;
-                            if (String(time_pass/100).length <= 3) {
-                                $("#time").text(time_pass/100);
+                        if (level_is_started == 1) {
+                            if (level_is_pased == 0 && is_break == 1 && time_pass < 3000) {
+                                time_pass = time_pass + 5;
+                                if (String(time_pass/100).length <= 3) {
+                                    $("#time").text(time_pass/100);
+                                }
                             }
-                        }
-                        else if (level_is_pased == 0 && is_break == 0 && time_pass < 3000){
-                            time_pass_hod = time_pass_hod + 5;
-                            if (String(time_pass_hod/100).length <= 3) {
-                                $("#time_hod").text(time_pass/100);
+                            else if (level_is_pased == 0 && is_break == 0 && time_pass < 3000){
+                                time_pass_hod = time_pass_hod + 5;
+                                if (String(time_pass_hod/100).length <= 3) {
+                                    $("#time_hod").text(time_pass/100);
+                                }
                             }
-                        }
-                        else if (level_is_pased == 0 && is_break == 1 && time_pass >= 3000){
-                            hodov = hodov+1;
-                            $("#hod").text(hodov);
-                            time_pass = 0;
-                        }
-                        else{
-                            return;
+                            else if (level_is_pased == 0 && is_break == 1 && time_pass >= 3000){
+                                hodov = hodov+1;
+                                $("#hod").text(hodov);
+                                time_pass = 0;
+                            }
+                            else{
+                                return;
+                            }
                         }
                     }, time_speed/2);
                 }, 550);
@@ -996,10 +1014,140 @@
         else if (level_is_ok != 1) {
             alert("CHECK YOUR LEVEL!❌")
         }
-        // else if (w_k_d != 0) {
-        //     alert("YOU NOW IN CONSTRUСTOR MODE!❌")
-        // }
-    })
+    });
+    $("#generate").click(function(){
+        if (w_k_d == 0 && level_is_started == 0) {
+            $("#walls").children().remove()
+            let lenW = 10
+            let value = [];
+            function noise(nx, ny) {
+                return (nx, ny) / 2 + 0.5;
+            }
+            for (let x = 0; x < lenW; x++) {
+                value[x] = [];
+                for (let y = 0; y < lenW; y++) {
+                    function getInt(max) {
+                        return Math.floor(Math.random() * Math.floor(max));
+                    }
+                    let nx;
+                    let ny;
+                    if ((getInt(100)/100) >= 0.5) {
+                        if ((getInt(100)/100) >= 0.5) {
+                            nx = (x)/lenW - 0.5;
+                            ny = (y)/lenW - 0.5;
+                        }
+                        else{
+                            nx = (lenW-x)/lenW - 0.5;
+                            ny = (lenW-y)/lenW - 0.5;
+                        } 
+                    }
+                    else{
+                        if ((getInt(100)/100) >= 0.5) {
+                            ny = (x)/lenW - 0.5;
+                            nx = (y)/lenW - 0.5;
+                        }
+                        else{
+                            ny = (lenW-x)/lenW - 0.5;
+                            nx = (lenW-y)/lenW - 0.5;
+                        }
+                    }
+                    if (noise(nx, ny) >= 0.55) {
+                        value[x][y] = 1;
+                    }
+                    else{
+                        value[x][y] = 0;
+                    }
+                }
+            }
+            for (let x = 0; x < lenW; x++) {
+                for (let y = 0; y < lenW; y++) {
+                    if (value[x][y]==1) {
+                        function check_wall(pos_0, pos_1){
+                            fat_wall = 0
+                            function fat_w_ch(x, y) {
+                                return document.getElementById(x+"_"+y+"_wall");
+                            }
+                            if (fat_w_ch(pos_0-1, pos_1-1) != null && fat_w_ch(pos_0, pos_1-1) != null && fat_w_ch(pos_0-1, pos_1) != null) {
+                                fat_wall = 1;
+                            }
+                            if (fat_w_ch(pos_0+1, pos_1+1) != null && fat_w_ch(pos_0, pos_1+1) != null && fat_w_ch(pos_0+1, pos_1) != null) {
+                                fat_wall = 1;
+                            }
+                            if (fat_w_ch(pos_0+1, pos_1-1) != null && fat_w_ch(pos_0, pos_1-1) != null && fat_w_ch(pos_0+1, pos_1) != null) {
+                                fat_wall = 1;
+                            }
+                            if (fat_w_ch(pos_0-1, pos_1+1) != null && fat_w_ch(pos_0, pos_1+1) != null && fat_w_ch(pos_0-1, pos_1) != null) {
+                                fat_wall = 1;
+                            }
+                            return fat_wall;
+                        }
+                        if (check_wall(x, y) == 0 && ((pos[0] != x || pos[1] != y)&&((pos[0]+1 != x || pos[1] != y) && (pos[0]-1 != x || pos[1] != y) && (pos[0] != x || pos[1]-1 != y) && (pos[0] != x || pos[1]+1 != y)))) {
+                            wall = "<div id='"+(x+"_"+y+"_wall")+"' class='wall' onclick='wall_click(id)'></div>"
+                            $("#walls").append(wall);
+                            id_wall = String("#"+x+"_"+y+"_wall")
+                            $(id_wall).css({
+                                "left": ((wid-390)/2)-2+(x*39)+"px",
+                                "top": 100+(y*39)+"px"
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    });
+    $("#generate_noise").click(function(){
+        if (w_k_d == 0 && level_is_started == 0) {
+            $("#walls").children().remove()
+            let lenW = 50;
+            let value = [];
+            function noise(nx, ny) {
+                return (nx, ny) / 2 + 0.5;
+            }
+            for (let x = 0; x < lenW; x++) {
+                value[x] = [];
+                for (let y = 0; y < lenW; y++) {
+                    function getInt(max) {
+                        return Math.floor(Math.random() * Math.floor(max));
+                    }
+                    let nx;
+                    let ny;
+                    if ((getInt(100)/100) >= 0.5) {
+                        if ((getInt(100)/100) >= 0.5) {
+                            nx = (x)/lenW - 0.5;
+                            ny = (y)/lenW - 0.5;
+                        }
+                        else{
+                            nx = (lenW-x)/lenW - 0.5;
+                            ny = (lenW-y)/lenW - 0.5;
+                        } 
+                    }
+                    else{
+                        if ((getInt(100)/100) >= 0.5) {
+                            ny = (x)/lenW - 0.5;
+                            nx = (y)/lenW - 0.5;
+                        }
+                        else{
+                            ny = (lenW-x)/lenW - 0.5;
+                            nx = (lenW-y)/lenW - 0.5;
+                        }
+                    }
+                    value[x][y] = noise(nx, ny);
+                }
+            }
+            for (let x = 0; x < lenW; x++) {
+                for (let y = 0; y < lenW; y++) {
+                    wall = "<div id='"+(x+"_"+y+"_wall")+"' class='wall_noise'></div>"
+                    $("#walls").append(wall);
+                    id_wall = String("#"+x+"_"+y+"_wall")
+                    $(id_wall).css({
+                        "left": ((wid-390)/2)-2+(x*7.8)+"px",
+                        "top": 100+(y*7.8)+"px",
+                        "opacity": value[x][y]
+                    });
+                }
+            }
+        }
+    });
 </script>
 <style>
     *{
@@ -1123,6 +1271,30 @@
         text-align: center;
         transition: 0.5s;
     }
+    #generate{
+        width: 390px;
+        height: 45px;
+        position: fixed;
+        top: 665px;
+        border-radius: 5px;
+        border: 2px solid rgb(118, 0, 197);
+        background-color: rgb(233, 233, 233);
+        font-size: 2em;
+        text-align: center;
+        transition: 0.5s;
+    }
+    #generate_noise{
+        width: 390px;
+        height: 45px;
+        position: fixed;
+        top: 720px;
+        border-radius: 5px;
+        border: 2px solid rgb(197, 0, 49);
+        background-color: rgb(233, 233, 233);
+        font-size: 2em;
+        text-align: center;
+        transition: 0.5s;
+    }
     #restart{
         width: 390px;
         height: 45px;
@@ -1165,6 +1337,17 @@
         height: 37px;
         border-radius: 3px;
         border: 2px solid rgb(177, 177, 177);
+        background-color: rgb(66, 66, 66);
+        position: absolute;
+        margin-right: -2px;
+        margin-bottom: -2px;
+        z-index: 10;
+    }
+    .wall_noise{
+        width: 7.4px;
+        height: 7.4px;
+        border-radius: 0.3px;
+        border: 0.4px solid rgb(177, 177, 177);
         background-color: rgb(66, 66, 66);
         position: absolute;
         margin-right: -2px;

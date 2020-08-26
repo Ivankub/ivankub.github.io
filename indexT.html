@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script type="text/javascript">
+let lenW = 10
+let value_3 = [];
+function noise(nx, ny) {
+  return (nx, ny) / 2 + 0.5;
+}
+for (let x = 0; x < lenW; x++) {
+    value_3[x] = [];
+    for (let y = 0; y < lenW; y++) {
+        function getInt(max) {
+            return Math.floor(Math.random() * Math.floor(max));
+        }
+        let nx;
+        let ny;
+        if ((getInt(100)/100) >= 0.5) {
+            if ((getInt(100)/100) >= 0.5) {
+                nx = (x)/lenW - 0.5;
+                ny = (y)/lenW - 0.5;
+            }
+            else{
+                nx = (lenW-x)/lenW - 0.5;
+                ny = (lenW-y)/lenW - 0.5;
+            } 
+        }
+        else{
+            if ((getInt(100)/100) >= 0.5) {
+                ny = (x)/lenW - 0.5;
+                nx = (y)/lenW - 0.5;
+            }
+            else{
+                ny = (lenW-x)/lenW - 0.5;
+                nx = (lenW-y)/lenW - 0.5;
+            }
+        }
+        if (noise(nx, ny) >= 0.62) {
+            value_3[x][y] = 1;
+        }
+        else{
+            value_3[x][y] = 0;
+        }
+    }
+}
+</script>
+</html>
