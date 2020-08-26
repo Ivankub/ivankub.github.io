@@ -32,7 +32,7 @@
         <div id="check_wait">CHECKING LEVEL. PLESE WAIT!</div>
         <div id="win">YOU WIN</div>
         <div id="restart">RESTART</div>
-        <div id="version">v 0.9.5</div>
+        <div id="version">v 0.9.6</div>
     </div>
 </body>
 <script type="text/javascript">
@@ -57,6 +57,7 @@
     let is_break = 1;
     let time_speed = 100;
     let timer_func = 0;
+    let lenWw = 50;
     for (let i = 0; i < 100; i++) {
         let y = Math.trunc(i/10)
         let x = i%10
@@ -1097,15 +1098,14 @@
     });
     $("#generate_noise").click(function(){
         if (w_k_d == 0 && level_is_started == 0) {
-            $("#walls").children().remove()
-            let lenW = 50;
+            $("#walls").children().remove();
             let value = [];
             function noise(nx, ny) {
                 return (nx, ny) / 2 + 0.5;
             }
-            for (let x = 0; x < lenW; x++) {
+            for (let x = 0; x < lenWw; x++) {
                 value[x] = [];
-                for (let y = 0; y < lenW; y++) {
+                for (let y = 0; y < lenWw; y++) {
                     function getInt(max) {
                         return Math.floor(Math.random() * Math.floor(max));
                     }
@@ -1113,36 +1113,38 @@
                     let ny;
                     if ((getInt(100)/100) >= 0.5) {
                         if ((getInt(100)/100) >= 0.5) {
-                            nx = (x)/lenW - 0.5;
-                            ny = (y)/lenW - 0.5;
+                            nx = (x)/lenWw - 0.5;
+                            ny = (y)/lenWw - 0.5;
                         }
                         else{
-                            nx = (lenW-x)/lenW - 0.5;
-                            ny = (lenW-y)/lenW - 0.5;
+                            nx = (lenWw-x)/lenWw - 0.5;
+                            ny = (lenWw-y)/lenWw - 0.5;
                         } 
                     }
                     else{
                         if ((getInt(100)/100) >= 0.5) {
-                            ny = (x)/lenW - 0.5;
-                            nx = (y)/lenW - 0.5;
+                            ny = (x)/lenWw - 0.5;
+                            nx = (y)/lenWw - 0.5;
                         }
                         else{
-                            ny = (lenW-x)/lenW - 0.5;
-                            nx = (lenW-y)/lenW - 0.5;
+                            ny = (lenWw-x)/lenWw - 0.5;
+                            nx = (lenWw-y)/lenWw - 0.5;
                         }
                     }
                     value[x][y] = noise(nx, ny);
                 }
             }
-            for (let x = 0; x < lenW; x++) {
-                for (let y = 0; y < lenW; y++) {
+            for (let x = 0; x < lenWw; x++) {
+                for (let y = 0; y < lenWw; y++) {
                     wall = "<div id='"+(x+"_"+y+"_wall")+"' class='wall_noise'></div>"
                     $("#walls").append(wall);
                     id_wall = String("#"+x+"_"+y+"_wall")
                     $(id_wall).css({
-                        "left": ((wid-390)/2)-2+(x*7.8)+"px",
-                        "top": 100+(y*7.8)+"px",
-                        "opacity": value[x][y]
+                        "left": ((wid-390)/2)-2+(x*(390/lenWw))+"px",
+                        "top": 100+(y*(390/lenWw))+"px",
+                        "width": (400/lenWw) + "px",
+                        "height": (400/lenWw) + "px",
+                        "background-color": "rgb("+(255*value[x][y])+","+(255*(1-value[x][y]))+",0)"
                     });
                 }
             }
@@ -1346,8 +1348,6 @@
     .wall_noise{
         width: 7.4px;
         height: 7.4px;
-        border-radius: 0.3px;
-        border: 0.4px solid rgb(177, 177, 177);
         background-color: rgb(66, 66, 66);
         position: absolute;
         margin-right: -2px;
