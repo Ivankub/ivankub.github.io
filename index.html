@@ -32,7 +32,7 @@
         <div id="check_wait">CHECKING LEVEL. PLESE WAIT!</div>
         <div id="win">YOU WIN</div>
         <div id="restart">RESTART</div>
-        <div id="version">v 0.9.6</div>
+        <div id="version">v 0.9.9</div>
     </div>
 </body>
 <script type="text/javascript">
@@ -488,11 +488,13 @@
             if (type == "me") {
                 checker_place_first(pos_check_0, pos_check_1);
             }
-            else if (type == "key" && (level_is_ok == 1 && (get_element(pos_check_0+1, pos_check_1) != null || get_element(pos_check_0-1, pos_check_1) != null || get_element(pos_check_0, pos_check_1+1) != null || get_element(pos_check_0, pos_check_1-1) != null) || (level_is_ok == 1 || (pos_check_0 == 0||pos_check_0 == 9||pos_check_1 == 9||pos_check_1 == 0)))) {
+            else if (type == "key" && (level_is_ok == 1 && ((get_element(pos_check_0+1, pos_check_1) != null || get_element(pos_check_0-1, pos_check_1) != null || get_element(pos_check_0, pos_check_1+1) != null || get_element(pos_check_0, pos_check_1-1) != null) || (level_is_ok == 1 || (pos_check_0 == 0||pos_check_0 == 9||pos_check_1 == 9||pos_check_1 == 0))))) {
                 checker_place_first(pos_check_0, pos_check_1);
             }
             
             function checker_place_first(pos_0, pos_1, napr){
+                pos_0 = parseInt(pos_0)
+                pos_1 = parseInt(pos_1)
                 function get_element(x, y){
                     wall_id = document.getElementById(x+"_"+y+"_wall")
                     return wall_id
@@ -521,6 +523,11 @@
                     }
                     else if (napravl == "down") {
                         if (document.getElementById(x+"_"+(y-1)+"_checker_down") != null) {
+                            okey_key = 1
+                        }
+                    }
+                    else if (napravl == "active") {
+                        if (document.getElementById((x+1)+"_"+y+"_checker_active") != null || document.getElementById((x-1)+"_"+y+"_checker_active") != null || document.getElementById(x+"_"+(y+1)+"_checker_active") != null || document.getElementById(x+"_"+(y-1)+"_checker_active") != null) {
                             okey_key = 1
                         }
                     }
@@ -555,6 +562,11 @@
                     }
                     else if (napravl == "down") {
                         if (document.getElementById(x+"_"+(y-1)+"_checker_down") != null) {
+                            okey_door = 1
+                        }
+                    }
+                    else if (napravl == "active") {
+                        if (document.getElementById((x+1)+"_"+y+"_checker_active") != null || document.getElementById((x-1)+"_"+y+"_checker_active") != null || document.getElementById(x+"_"+(y+1)+"_checker_active") != null || document.getElementById(x+"_"+(y-1)+"_checker_active") != null) {
                             okey_door = 1
                         }
                     }
@@ -627,6 +639,8 @@
             }
             //////////////////////////////////////////////////
             function checker_place(pos_0, pos_1, napr){
+                pos_0 = parseInt(pos_0)
+                pos_1 = parseInt(pos_1)
                 function get_element(x, y){
                     wall_id = document.getElementById(x+"_"+y+"_wall")
                     return wall_id
@@ -655,6 +669,11 @@
                     }
                     else if (napravl == "down") {
                         if (document.getElementById(x+"_"+(y-1)+"_checker_down") != null) {
+                            okey_key = 1
+                        }
+                    }
+                    else if (napravl == "active") {
+                        if (document.getElementById((x+1)+"_"+y+"_checker_active") != null || document.getElementById((x-1)+"_"+y+"_checker_active") != null || document.getElementById(x+"_"+(y+1)+"_checker_active") != null || document.getElementById(x+"_"+(y-1)+"_checker_active") != null) {
                             okey_key = 1
                         }
                     }
@@ -689,6 +708,11 @@
                     }
                     else if (napravl == "down") {
                         if (document.getElementById(x+"_"+(y-1)+"_checker_down") != null) {
+                            okey_door = 1
+                        }
+                    }
+                    else if (napravl == "active") {
+                        if (document.getElementById((x+1)+"_"+y+"_checker_active") != null || document.getElementById((x-1)+"_"+y+"_checker_active") != null || document.getElementById(x+"_"+(y+1)+"_checker_active") != null || document.getElementById(x+"_"+(y-1)+"_checker_active") != null) {
                             okey_door = 1
                         }
                     }
@@ -788,7 +812,7 @@
                                     checker_place(x_coord, y_coord, napravleniye);
                                 }
                                 else{
-                                    checker_place_first(x_coord, y_coord);
+                                    checker_place_first(x_coord, y_coord, napravleniye);
                                 }
                             }
                         }
@@ -800,7 +824,7 @@
                                     y_coord = parseInt(check_id.split("_")[1]);
                                     napravleniye = check_id.split("_")[3];
                                     if (napravleniye == "active") {
-                                        checker_place_first(x_coord, y_coord);
+                                        checker_place_first(x_coord, y_coord, napravleniye);
                                     }
                                 }
                             } 
@@ -837,7 +861,6 @@
                     let pos_key = [0, 0];
                     pos_key[0] = $(".key:eq("+ki+")").attr("id").split("_")[0];
                     pos_key[1] = $(".key:eq("+ki+")").attr("id").split("_")[1];
-                    console.log("me_key")
                     me_key_check(pos_key[0], pos_key[1], "key")
                     setTimeout(() => {
                         if (prefunc_level_is_ok == 1) {
