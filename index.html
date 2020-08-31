@@ -35,7 +35,7 @@
         <div id="alert"></div>
         <div id="alert_ok">OK</div>
         <div id="alert_fon"></div>
-        <div id="version">v 0.9.12</div>
+        <div id="version">v 0.9.14</div>
     </div>
 </body>
 <script type="text/javascript">
@@ -72,7 +72,7 @@
         $("#alert").text(text);
         $("#alert").css({
             "display": "block",
-            "top": "-15vw",
+            "top": "-180px",
             "background-image": "url(images/"+type+"_128_2.png)"
         });
         $("#alert_fon").css({
@@ -89,13 +89,13 @@
                 "opacity": "1"
             });
             $("#alert").css({
-                "top": "5vw"
+                "top": "90px"
             });
         }, 300);
     }
     $("#alert_ok").click(function () {
         $("#alert").css({
-            "top": "-15vw"
+            "top": "-180px"
         });
         $("#alert_fon").css({
             "opacity": "0"
@@ -203,12 +203,16 @@
         left_pole = ((wid-390)/2)-2+"px";
         left_pole_2 = ((wid-390)/2)+200+"px";
         left_score = ((wid-390)/2)+93+"px";
+        left_alert = ((wid-180)/2)-8+"px";
+        left_alert_ok = ((wid-80)/2)-6+"px";
         $("#pole").css("left", left_pole);
         $("#text_add_walls").css("left", left_pole);
         $("#text_add_key").css("left", left_pole_2);
         $("#text_add_door").css("left", left_pole);
         $("#start").css("left", left_pole);
         $("#generate").css("left", left_pole);
+        $("#alert").css("left", left_alert);
+        $("#alert_ok").css("left", left_alert_ok);
         $("#generate_noise").css({
             "left": left_pole,
             "display": "none"
@@ -1550,24 +1554,24 @@
         z-index: 100;
     }
     #alert{
-        width: 18vw;
-        height: 12vw;
+        width: 180px;
+        height: 120px;
         background-color: rgb(230, 230, 230);
         position: fixed;
         top: 0vw;
         left: 40vw;
-        border-radius: 2vw;
+        border-radius: 20px;
         text-align: center;
         background-image: url("images/cross_128_2.png");
         background-repeat: no-repeat;
-        background-size: 14vw;
-        background-position: 10vw;
-        font-size: 2.2em;
+        background-size: 140px;
+        background-position: 100px;
+        font-size: 2em;
         overflow-wrap: break-word;
         overflow: hidden;
         overflow-y: auto;
         text-shadow: 1px 1px 1px white;
-        padding: 1vw;
+        padding: 10px;
         z-index: 9998;
         display: none;
         transition: 0.3s;
@@ -1585,17 +1589,17 @@
         z-index: 9997;
     }
     #alert_ok{
-        width: 4vw;
-        height: 2vw;
+        width: 80px;
+        height: 40px;
         background-color: rgb(40, 180, 0);
         position: fixed;
-        top: 16vw;
+        top: 220px;
         left: 47.5vw;
-        border-radius: 1vw;
+        border-radius: 10px;
         z-index: 9998;
         color: white;
-        font-size: 2em;
-        padding: 0.5vw;
+        font-size: 1.8em;
+        padding: 5px;
         text-align: center;
         opacity: 0;
         display: none;
