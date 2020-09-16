@@ -35,7 +35,7 @@
         <div id="alert"></div>
         <div id="alert_ok">OK</div>
         <div id="alert_fon"></div>
-        <div id="version">v 0.9.15</div>
+        <div id="version">v 0.10.4</div>
     </div>
 </body>
 <script type="text/javascript">
@@ -243,61 +243,22 @@
         start_game();
     }, 1);
     function button_click_n(id) {
-        let walk_ok = 1;
+        hodov = hodov + 1
+        $(".block_near").attr("class", "block button");
+        $(".smoke_near").attr("class", "smoke");
         x = parseInt(id.split("_")[0]);
-        y = parseInt(id.split("_")[1]);
-        x_mod = x-pos[0];
-        y_mod = y-pos[1];
-        pos_x_n = pos[0]+x_mod;
-        pos_y_n = pos[1]+y_mod;
-        is_break = 0;
-        if (level_is_started == 1) {
-            hodov = hodov + 1;
-            $("#hod").text(hodov);
+        y = parseInt(id.split("_")[1])
+        if (document.getElementById(x+"_"+y+"_key") == null && document.getElementById(x+"_"+y+"_door") == null && document.getElementById(x+"_"+y+"_wall") == null) {
+            pos[0] = parseInt(id.split("_")[0])
+            pos[1] = parseInt(id.split("_")[1])
         }
-        function while_walk() {
-            setTimeout(() => {
-                if (walk_ok == 1) {
-                    $(".block_near").attr("class", "block button");
-                    $(".smoke_near").attr("class", "smoke");
-                    function remove_smoke_n(id) {
-                        $("#"+id).attr("class", "smoke");
-                        $("#"+id).css("display", "none");
-                        $("#"+id).removeAttr("onclick");
-                    }
-                    if (document.getElementById(pos_x_n+"_"+pos_y_n+"_key") == null && document.getElementById(pos_x_n+"_"+pos_y_n+"_door") == null && document.getElementById(pos_x_n+"_"+pos_y_n+"_wall") == null && pos_x_n >= 0 && pos_x_n <= 9 && pos_y_n >= 0 && pos_y_n <= 9) {
-                        pos[0] = pos_x_n;
-                        pos[1] = pos_y_n;
-                        remove_smoke_n((pos[0]+x_mod)+"_"+(pos[1]+y_mod)+"_smoke");
-                        while_walk();
-                    }
-                    else if (document.getElementById(pos_x_n+"_"+pos_y_n+"_key") != null && level_is_started == 1){
-                        key_click("near_"+pos_x_n+"_"+pos_y_n);
-                        remove_smoke_n((pos[0]+x_mod)+"_"+(pos[1]+y_mod)+"_smoke");
-                        while_walk();
-                    }
-                    else if (document.getElementById(pos_x_n+"_"+pos_y_n+"_key") != null){
-                        pos[0] = pos_x_n;
-                        pos[1] = pos_y_n;
-                        remove_smoke_n((pos[0]+x_mod)+"_"+(pos[1]+y_mod)+"_smoke");
-                        while_walk();
-                    }
-                    else{
-                        walk_ok = 0;
-                        is_break = 1;
-                        time_pass = 0;
-                        near();
-                    }
-                    pos_x_n = pos[0]+x_mod;
-                    pos_y_n = pos[1]+y_mod;
-                }
-                $("#me").css({
-                    "left": ((wid-390)/2)+(pos[0]*39)+"px",
-                    "top": 102+(pos[1]*39)+"px"
-                });
-            }, 100);
-        }
-        while_walk();
+        
+        $("#me").css({
+            "left": ((wid-390)/2)+(pos[0]*39)+"px",
+            "top": 102+(pos[1]*39)+"px"
+        });
+        near();
+        
     }
     $(".button").click(function(){
         if ($(this).attr("class") == "block_near button") {
@@ -327,6 +288,7 @@
             pos_b[0] = pos[0]
             pos_b[1] = pos[1]
             near();
+            
         }
     }
     $("#text_add_walls").click(function(){
@@ -526,410 +488,117 @@
         }
     };
     $("#check").click(function(){
-        let prefunc_level_is_ok;
-        $("#check_wait").css("display", "block");
-        function me_key_check(pos_check_0, pos_check_1, type) {
-            prefunc_level_is_ok = 0;
-            let wall_id;
-            let check_id;
-            let key_id;
-            let door_id;
-            key_is = 0;
-            door_is = 0;
+        if (w_k_d != 0){
+            w_k_d = 0;
+            $("#text_add_key").text("ADD KEY");
+            $("#text_add_walls").text("ADD WALLS");
+            $("#text_add_door").text("ADD DOOR");
+        }
+        let wall_id;
+        let check_id;
+        let key_id;
+        let door_id;
+        is_key = 0;
+        is_door = 0;
+        checker_place(pos[0], pos[1]);
+        function checker_place(pos_0, pos_1){
             function get_element(x, y){
                 wall_id = document.getElementById(x+"_"+y+"_wall")
                 return wall_id
             }
-            if (type == "me") {
-                checker_place_first(pos_check_0, pos_check_1);
+            function get_element_c(x, y){
+                check_id = document.getElementById(x+"_"+y+"_checker")
+                return check_id
             }
-            else if (type == "key" && (level_is_ok == 1 && ((get_element(pos_check_0+1, pos_check_1) != null || get_element(pos_check_0-1, pos_check_1) != null || get_element(pos_check_0, pos_check_1+1) != null || get_element(pos_check_0, pos_check_1-1) != null) || (level_is_ok == 1 || (pos_check_0 == 0||pos_check_0 == 9||pos_check_1 == 9||pos_check_1 == 0))))) {
-                checker_place_first(pos_check_0, pos_check_1);
-            }
-            
-            function checker_place_first(pos_0, pos_1, napr){
-                pos_0 = parseInt(pos_0)
-                pos_1 = parseInt(pos_1)
-                function get_element(x, y){
-                    wall_id = document.getElementById(x+"_"+y+"_wall")
-                    return wall_id
-                }
-                function get_element_c(x, y, napravl){
-                    check_id = document.getElementById(x+"_"+y+"_checker_"+napravl)
-                    return check_id
-                }
-                function get_element_k(x, y, napravl){
-                    key_id = document.getElementById(x+"_"+y+"_key");
-                    okey_key = 0;
-                    if (napravl == "left") {
-                        if (document.getElementById((x+1)+"_"+y+"_checker_left") != null) {
-                            okey_key = 1
-                        }
-                    }
-                    else if (napravl == "right") {
-                        if (document.getElementById((x-1)+"_"+y+"_checker_right") != null) {
-                            okey_key = 1
-                        }
-                    }
-                    else if (napravl == "top") {
-                        if (document.getElementById(x+"_"+(y+1)+"_checker_top") != null) {
-                            okey_key = 1
-                        }
-                    }
-                    else if (napravl == "down") {
-                        if (document.getElementById(x+"_"+(y-1)+"_checker_down") != null) {
-                            okey_key = 1
-                        }
-                    }
-                    else if (napravl == "active") {
-                        if (document.getElementById((x+1)+"_"+y+"_checker_active") != null || document.getElementById((x-1)+"_"+y+"_checker_active") != null || document.getElementById(x+"_"+(y+1)+"_checker_active") != null || document.getElementById(x+"_"+(y-1)+"_checker_active") != null) {
-                            okey_key = 1
-                        }
-                    }
-                    if ($("#"+x+"_"+y+"_key").attr("class") != "key checked" && okey_key == 1) {
-                        $("#"+x+"_"+y+"_key").addClass("checked");
-                        return key_id;
-                    }
-                    else if ($("#"+x+"_"+y+"_key").attr("class") == "key checked"){
-                        return 1
-                    }
-                    else {
-                        return null;
-                    }
-                }
-                function get_element_d(x, y, napravl){
-                    door_id = document.getElementById(x+"_"+y+"_door");
-                    okey_door = 0;
-                    if (napravl == "left") {
-                        if (document.getElementById((x+1)+"_"+y+"_checker_left") != null) {
-                            okey_door = 1
-                        }
-                    }
-                    else if (napravl == "right") {
-                        if (document.getElementById((x-1)+"_"+y+"_checker_right") != null) {
-                            okey_door = 1
-                        }
-                    }
-                    else if (napravl == "top") {
-                        if (document.getElementById(x+"_"+(y+1)+"_checker_top") != null) {
-                            okey_door = 1
-                        }
-                    }
-                    else if (napravl == "down") {
-                        if (document.getElementById(x+"_"+(y-1)+"_checker_down") != null) {
-                            okey_door = 1
-                        }
-                    }
-                    else if (napravl == "active") {
-                        if (document.getElementById((x+1)+"_"+y+"_checker_active") != null || document.getElementById((x-1)+"_"+y+"_checker_active") != null || document.getElementById(x+"_"+(y+1)+"_checker_active") != null || document.getElementById(x+"_"+(y-1)+"_checker_active") != null) {
-                            okey_door = 1
-                        }
-                    }
-                    if ($("#"+x+"_"+y+"_door").attr("class") != "door checked" && okey_door == 1) {
-                        $("#"+x+"_"+y+"_door").addClass("checked");
-                        return door_id;
-                    }
-                    else if ($("#"+x+"_"+y+"_door").attr("class") == "door checked"){
-                        return 1
-                    }
-                    else {
-                        return null;
-                    }
-                }
-                function check_all(pos_x, pos_y, naprav) {
-                    ok = null
-                    door_check = get_element_d(pos_x, pos_y, naprav);
-                    key_check = get_element_k(pos_x, pos_y, naprav);
-                    if (get_element(pos_x, pos_y, naprav) != null || get_element_c(pos_x, pos_y, naprav) != null || door_check != null) {
-                        ok = "no_ok"
-                    }
-                    if (key_check != null) {
-                        if (key_check != 1) {
-                            is_key = is_key + 1
-                        }
-                    }
-                    if (door_check != null) {
-                        if (door_check != 1) {
-                            is_door = is_door + 1
-                        }
-                    }
-                    return ok
-                }
-                if (pos_0-1 >= 0 && check_all(pos_0-1, pos_1, "left") == null) {
-                    checker = "<div id='"+((pos_0-1)+"_"+pos_1+"_checker_left")+"' class='checker'></div>"
-                    $("#checkes").append(checker)
-                    id_checker = String("#"+(pos_0-1)+"_"+pos_1+"_checker_left")
-                    $(id_checker).css({
-                        "left": ((wid-390)/2)-2+((pos_0-1)*39)+"px",
-                        "top": 100+(pos_1*39)+"px"
-                    });
-                }
-                if (pos_0+1 <= 9 && check_all(pos_0+1, pos_1, "right") == null) {
-                    checker = "<div id='"+((pos_0+1)+"_"+pos_1+"_checker_right")+"' class='checker'></div>"
-                    $("#checkes").append(checker)
-                    id_checker = String("#"+(pos_0+1)+"_"+pos_1+"_checker_right")
-                    $(id_checker).css({
-                        "left": ((wid-390)/2)-2+((pos_0+1)*39)+"px",
-                        "top": 100+(pos_1*39)+"px"
-                    });
-                }
-                if (pos_1-1 >= 0 && check_all(pos_0, pos_1-1, "top") == null) {
-                    checker = "<div id='"+(pos_0+"_"+(pos_1-1)+"_checker_top")+"' class='checker'></div>"
-                    $("#checkes").append(checker)
-                    id_checker = String("#"+pos_0+"_"+(pos_1-1)+"_checker_top")
-                    $(id_checker).css({
-                        "left": ((wid-390)/2)-2+(pos_0*39)+"px",
-                        "top": 100+((pos_1-1)*39)+"px"
-                    });
-                }
-                if (pos_1+1 <= 9 && check_all(pos_0, pos_1+1, "down") == null) {
-                    checker = "<div id='"+(pos_0+"_"+(pos_1+1)+"_checker_down")+"' class='checker'></div>"
-                    $("#checkes").append(checker)
-                    id_checker = String("#"+pos_0+"_"+(pos_1+1)+"_checker_down")
-                    $(id_checker).css({
-                        "left": ((wid-390)/2)-2+(pos_0*39)+"px",
-                        "top": 100+((pos_1+1)*39)+"px"
-                    });
-                }
-            }
-            //////////////////////////////////////////////////
-            function checker_place(pos_0, pos_1, napr){
-                pos_0 = parseInt(pos_0)
-                pos_1 = parseInt(pos_1)
-                function get_element(x, y){
-                    wall_id = document.getElementById(x+"_"+y+"_wall")
-                    return wall_id
-                }
-                function get_element_c(x, y, napravl){
-                    check_id = document.getElementById(x+"_"+y+"_checker_"+napravl)
-                    return check_id
-                }
-                function get_element_k(x, y, napravl){
-                    key_id = document.getElementById(x+"_"+y+"_key");
-                    okey_key = 0;
-                    if (napravl == "left") {
-                        if (document.getElementById((x+1)+"_"+y+"_checker_left") != null) {
-                            okey_key = 1
-                        }
-                    }
-                    else if (napravl == "right") {
-                        if (document.getElementById((x-1)+"_"+y+"_checker_right") != null) {
-                            okey_key = 1
-                        }
-                    }
-                    else if (napravl == "top") {
-                        if (document.getElementById(x+"_"+(y+1)+"_checker_top") != null) {
-                            okey_key = 1
-                        }
-                    }
-                    else if (napravl == "down") {
-                        if (document.getElementById(x+"_"+(y-1)+"_checker_down") != null) {
-                            okey_key = 1
-                        }
-                    }
-                    else if (napravl == "active") {
-                        if (document.getElementById((x+1)+"_"+y+"_checker_active") != null || document.getElementById((x-1)+"_"+y+"_checker_active") != null || document.getElementById(x+"_"+(y+1)+"_checker_active") != null || document.getElementById(x+"_"+(y-1)+"_checker_active") != null) {
-                            okey_key = 1
-                        }
-                    }
-                    if ($("#"+x+"_"+y+"_key").attr("class") != "key checked" && okey_key == 1) {
-                        $("#"+x+"_"+y+"_key").addClass("checked");
-                        return key_id;
-                    }
-                    else if ($("#"+x+"_"+y+"_key").attr("class") == "key checked"){
-                        return 1
-                    }
-                    else {
-                        return null;
-                    }
-                }
-                function get_element_d(x, y, napravl){
-                    door_id = document.getElementById(x+"_"+y+"_door");
-                    okey_door = 0;
-                    if (napravl == "left") {
-                        if (document.getElementById((x+1)+"_"+y+"_checker_left") != null) {
-                            okey_door = 1
-                        }
-                    }
-                    else if (napravl == "right") {
-                        if (document.getElementById((x-1)+"_"+y+"_checker_right") != null) {
-                            okey_door = 1
-                        }
-                    }
-                    else if (napravl == "top") {
-                        if (document.getElementById(x+"_"+(y+1)+"_checker_top") != null) {
-                            okey_door = 1
-                        }
-                    }
-                    else if (napravl == "down") {
-                        if (document.getElementById(x+"_"+(y-1)+"_checker_down") != null) {
-                            okey_door = 1
-                        }
-                    }
-                    else if (napravl == "active") {
-                        if (document.getElementById((x+1)+"_"+y+"_checker_active") != null || document.getElementById((x-1)+"_"+y+"_checker_active") != null || document.getElementById(x+"_"+(y+1)+"_checker_active") != null || document.getElementById(x+"_"+(y-1)+"_checker_active") != null) {
-                            okey_door = 1
-                        }
-                    }
-                    if ($("#"+x+"_"+y+"_door").attr("class") != "door checked" && okey_door == 1) {
-                        $("#"+x+"_"+y+"_door").addClass("checked");
-                        return door_id;
-                    }
-                    else if ($("#"+x+"_"+y+"_door").attr("class") == "door checked"){
-                        return 1
-                    }
-                    else {
-                        return null;
-                    }
-                }
-                function check_all(pos_x, pos_y, naprav) {
-                    ok = null
-                    door_check = get_element_d(pos_x, pos_y, naprav);
-                    key_check = get_element_k(pos_x, pos_y, naprav);
-                    if (get_element(pos_x, pos_y, naprav) != null || get_element_c(pos_x, pos_y, naprav) != null || door_check != null) {
-                        ok = "no_ok"
-                    }
-                    if (key_check != null) {
-                        if (key_check != 1) {
-                            is_key = is_key + 1
-                        }
-                    }
-                    if (door_check != null) {
-                        if (door_check != 1) {
-                            is_door = is_door + 1
-                        }
-                    }
-                    return ok
-                }
-                
-                if (pos_0-1 >= 0 && check_all(pos_0-1, pos_1, "left") == null && napr == "left") {
-                    checker = "<div id='"+((pos_0-1)+"_"+pos_1+"_checker_left")+"' class='checker'></div>"
-                    $("#checkes").append(checker)
-                    id_checker = String("#"+(pos_0-1)+"_"+pos_1+"_checker_left")
-                    $(id_checker).css({
-                        "left": ((wid-390)/2)-2+((pos_0-1)*39)+"px",
-                        "top": 100+(pos_1*39)+"px"
-                    });
-                }
-                if ((pos_0-1 < 0 || check_all(pos_0-1, pos_1, "left") != null) && get_element_c(pos_0-1, pos_1, "left") == null && napr == "left"){
-                    $(String("#"+pos_0+"_"+pos_1+"_checker_left")).attr("id", pos_0+"_"+pos_1+"_checker_active");
-                }
-                
-                if (pos_0+1 <= 9 && check_all(pos_0+1, pos_1, "right") == null && napr == "right") {
-                    checker = "<div id='"+((pos_0+1)+"_"+pos_1+"_checker_right")+"' class='checker'></div>"
-                    $("#checkes").append(checker)
-                    id_checker = String("#"+(pos_0+1)+"_"+pos_1+"_checker_right")
-                    $(id_checker).css({
-                        "left": ((wid-390)/2)-2+((pos_0+1)*39)+"px",
-                        "top": 100+(pos_1*39)+"px"
-                    });
-                }
-                if ((pos_0+1 == 10 || check_all(pos_0+1, pos_1, "right") != null) && get_element_c(pos_0+1, pos_1, "right") == null && napr == "right"){
-                    $(String("#"+pos_0+"_"+pos_1+"_checker_right")).attr("id", pos_0+"_"+pos_1+"_checker_active");
-                }
-                
-                if (pos_1-1 >= 0 && check_all(pos_0, pos_1-1, "top") == null && napr == "top") {
-                    checker = "<div id='"+(pos_0+"_"+(pos_1-1)+"_checker_top")+"' class='checker'></div>"
-                    $("#checkes").append(checker)
-                    id_checker = String("#"+pos_0+"_"+(pos_1-1)+"_checker_top")
-                    $(id_checker).css({
-                        "left": ((wid-390)/2)-2+(pos_0*39)+"px",
-                        "top": 100+((pos_1-1)*39)+"px"
-                    });
-                }
-                if ((pos_1-1 < 0 || check_all(pos_0, pos_1-1, "top") != null) && get_element_c(pos_0, pos_1-1, "top") == null && napr == "top"){
-                    $(String("#"+pos_0+"_"+pos_1+"_checker_top")).attr("id", pos_0+"_"+pos_1+"_checker_active");
-                }
-                
-                if (pos_1+1 <= 9 && check_all(pos_0, pos_1+1, "down") == null && napr == "down") {
-                    checker = "<div id='"+(pos_0+"_"+(pos_1+1)+"_checker_down")+"' class='checker'></div>"
-                    $("#checkes").append(checker)
-                    id_checker = String("#"+pos_0+"_"+(pos_1+1)+"_checker_down")
-                    $(id_checker).css({
-                        "left": ((wid-390)/2)-2+(pos_0*39)+"px",
-                        "top": 100+((pos_1+1)*39)+"px"
-                    });
-                }
-                if ((pos_1+1 == 10 || check_all(pos_0, pos_1+1, "down") != null) && get_element_c(pos_0, pos_1+1, "down") == null && napr == "down"){
-                    $(String("#"+pos_0+"_"+pos_1+"_checker_down")).attr("id", pos_0+"_"+pos_1+"_checker_active");
-                }
-            }
-            setTimeout(() => {
-                for (let j = 0; j < 100; j++) {
-                    setTimeout(() => {
-                        for (let i = 0; i < 500-$("#walls").length; i++) {
-                            if (i < $("#checkes").children().length) {
-                                check_id = $("#checkes").children()[i].id
-                                x_coord = parseInt(check_id.split("_")[0]);
-                                y_coord = parseInt(check_id.split("_")[1]);
-                                napravleniye = check_id.split("_")[3];
-                                if (napravleniye != "active") {
-                                    checker_place(x_coord, y_coord, napravleniye);
-                                }
-                                else{
-                                    checker_place_first(x_coord, y_coord, napravleniye);
-                                }
-                            }
-                        }
-                        setTimeout(() => {
-                            for (let i = 0; i < 500-$("#walls").length; i++) {
-                                if (i < $("#checkes").children().length) {
-                                    check_id = $("#checkes").children()[i].id
-                                    x_coord = parseInt(check_id.split("_")[0]);
-                                    y_coord = parseInt(check_id.split("_")[1]);
-                                    napravleniye = check_id.split("_")[3];
-                                    if (napravleniye == "active") {
-                                        checker_place_first(x_coord, y_coord, napravleniye);
-                                    }
-                                }
-                            } 
-                        }, 25);
-                    }, j*50);
-                }
-            }, 1);
-            setTimeout(() => {
-                if (is_key == 0 || is_door == 0 || is_key != is_door) {
-                    $(".door").removeClass("checked");
-                    $(".key").removeClass("checked");
-                    $("#checkes").children().remove();
-                    prefunc_level_is_ok = 0
+            function get_element_k(x, y){
+                key_id = document.getElementById(x+"_"+y+"_key");
+                if ($("#"+x+"_"+y+"_key").attr("class") != "key checked") {
+                    $("#"+x+"_"+y+"_key").addClass("checked");
+                    return key_id;
                 }
                 else{
-                    $(".door").removeClass("checked");
-                    $(".key").removeClass("checked");
-                    $("#checkes").children().remove();
-                    prefunc_level_is_ok = 1
+                    return 1
                 }
-                is_door = 0
-                is_key = 0
-            }, 200);
+                
+            }
+            function get_element_d(x, y){
+                door_id = document.getElementById(x+"_"+y+"_door");
+                if ($("#"+x+"_"+y+"_door").attr("class") != "door checked") {
+                    $("#"+x+"_"+y+"_door").addClass("checked");
+                    return door_id;
+                }
+                else{
+                    return 1
+                }
+            }
+            function check_all(pos_x, pos_y) {
+                ok = null
+                door_check = get_element_d(pos_x, pos_y);
+                key_check = get_element_k(pos_x, pos_y);
+                if (get_element(pos_x, pos_y) != null || get_element_c(pos_x, pos_y) != null || door_check != null) {
+                    ok = "no_ok"
+                }
+                if (key_check != null) {
+                    if (key_check != 1) {
+                        is_key = is_key + 1
+                    }
+                }
+                if (door_check != null) {
+                    if (door_check != 1) {
+                        is_door = is_door + 1
+                    }
+                }
+                return ok
+            }
+            if (pos_0-1 >= 0 && check_all(pos_0-1, pos_1) == null) {
+                checker = "<div id='"+((pos_0-1)+"_"+pos_1+"_checker")+"' class='checker'></div>"
+                $("#checkes").append(checker)
+                id_checker = String("#"+(pos_0-1)+"_"+pos_1+"_checker")
+                $(id_checker).css({
+                    "left": ((wid-390)/2)-2+((pos_0-1)*39)+"px",
+                    "top": 100+(pos_1*39)+"px"
+                });
+            }
+            if (pos_0+1 <= 9 && check_all(pos_0+1, pos_1) == null) {
+                checker = "<div id='"+((pos_0+1)+"_"+pos_1+"_checker")+"' class='checker'></div>"
+                $("#checkes").append(checker)
+                id_checker = String("#"+(pos_0+1)+"_"+pos_1+"_checker")
+                $(id_checker).css({
+                    "left": ((wid-390)/2)-2+((pos_0+1)*39)+"px",
+                    "top": 100+(pos_1*39)+"px"
+                });
+            }
+            if (pos_1-1 >= 0 && check_all(pos_0, pos_1-1) == null) {
+                checker = "<div id='"+(pos_0+"_"+(pos_1-1)+"_checker")+"' class='checker'></div>"
+                $("#checkes").append(checker)
+                id_checker = String("#"+pos_0+"_"+(pos_1-1)+"_checker")
+                $(id_checker).css({
+                    "left": ((wid-390)/2)-2+(pos_0*39)+"px",
+                    "top": 100+((pos_1-1)*39)+"px"
+                });
+            }
+            if (pos_1+1 <= 9 && check_all(pos_0, pos_1+1) == null) {
+                checker = "<div id='"+(pos_0+"_"+(pos_1+1)+"_checker")+"' class='checker'></div>"
+                $("#checkes").append(checker)
+                id_checker = String("#"+pos_0+"_"+(pos_1+1)+"_checker")
+                $(id_checker).css({
+                    "left": ((wid-390)/2)-2+(pos_0*39)+"px",
+                    "top": 100+((pos_1+1)*39)+"px"
+                });
+            }
         }
-        me_key_check(pos[0], pos[1], "me")
         setTimeout(() => {
-            if (prefunc_level_is_ok == 1) {
-                level_is_ok = level_is_ok + 1;
-            }
-        }, 220);
-        setTimeout(() => {
-            for (let ki = 0; ki < $(".key").length; ki++) {
+            for (let i = 0; i < 100-$("#walls").length; i++) {
                 setTimeout(() => {
-                    let pos_key = [0, 0];
-                    pos_key[0] = $(".key:eq("+ki+")").attr("id").split("_")[0];
-                    pos_key[1] = $(".key:eq("+ki+")").attr("id").split("_")[1];
-                    me_key_check(pos_key[0], pos_key[1], "key")
-                    setTimeout(() => {
-                        if (prefunc_level_is_ok == 1) {
-                            level_is_ok = level_is_ok + 1;
-                        }
-                    }, 220);
-                }, ki*500);
+                    check_id = $("#checkes").children()[i].id
+                    x_coord = parseInt(check_id.split("_")[0]);
+                    y_coord = parseInt(check_id.split("_")[1]);
+                    checker_place(x_coord, y_coord);
+                }, i*2);
             }
-        }, 250);
-        
-        
+        }, 1);
         setTimeout(() => {
-            $("#check_wait").css("display", "none");
-            if (level_is_ok != $(".key").length+1) {
+            if (is_key == 0 || is_door == 0 || is_key != is_door) {
                 my_alert("cross", "YOUR LEVEL ISN'T CORRECT!");
                 level_is_ok = 0;
                 $(".door").removeClass("checked");
@@ -941,8 +610,8 @@
                 $(".door").removeClass("checked");
                 $(".key").removeClass("checked");
             }
-            $("#checkes").children().remove();
-        }, 2000);
+            $("#checkes").children().remove()
+        }, 500);
     });
     $("#start").click(function(){
         if (w_k_d != 0){
@@ -1160,7 +829,13 @@
                             }
                             return fat_wall;
                         }
-                        if (check_wall(x, y) == 0 && ((pos[0] != x || pos[1] != y)&&((pos[0]+1 != x || pos[1] != y) && (pos[0]-1 != x || pos[1] != y) && (pos[0] != x || pos[1]-1 != y) && (pos[0] != x || pos[1]+1 != y)))) {
+                        function check_door(x, y) {
+                            return document.getElementById(x+"_"+y+"_door");
+                        }
+                        function check_key(x, y) {
+                            return document.getElementById(x+"_"+y+"_key")
+                        }
+                        if (check_door(x ,y) == null && check_key(x ,y) == null && check_wall(x, y) == 0 && ((pos[0] != x || pos[1] != y)&&((pos[0]+1 != x || pos[1] != y) && (pos[0]-1 != x || pos[1] != y) && (pos[0] != x || pos[1]-1 != y) && (pos[0] != x || pos[1]+1 != y)))) {
                             wall = "<div id='"+(x+"_"+y+"_wall")+"' class='wall' onclick='wall_click(id)'></div>"
                             $("#walls").append(wall);
                             id_wall = String("#"+x+"_"+y+"_wall")
