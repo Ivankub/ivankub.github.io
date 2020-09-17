@@ -35,7 +35,7 @@
         <div id="alert"></div>
         <div id="alert_ok">OK</div>
         <div id="alert_fon"></div>
-        <div id="version">v 0.10.4</div>
+        <div id="version">v 0.10.8</div>
     </div>
 </body>
 <script type="text/javascript">
@@ -244,6 +244,7 @@
     }, 1);
     function button_click_n(id) {
         hodov = hodov + 1
+        $("#hod").text(hodov);
         $(".block_near").attr("class", "block button");
         $(".smoke_near").attr("class", "smoke");
         x = parseInt(id.split("_")[0]);
@@ -443,6 +444,8 @@
                     keys = keys-1
                     collect_keys = collect_keys+1
                     $("#collect_k").text(collect_keys);
+                    hodov = hodov + 1
+                    $("#hod").text(hodov);
                 }
             }
         }
@@ -473,7 +476,7 @@
                     if (doors == 0) {
                         level_is_pased = 1
                         $("#win").css("display", "block");
-                        $("#win").text("YOU WIN IN "+time_pass_hod/100+"sec AND "+hodov+"moves");
+                        $("#win").text("YOU WIN IN "+time_pass/100+"sec AND "+hodov+"moves");
                         setTimeout(() => {
                             $("#win").css("opacity", "1");
                             $("#restart").css("display", "block");
@@ -590,9 +593,11 @@
         setTimeout(() => {
             for (let i = 0; i < 100-$("#walls").length; i++) {
                 setTimeout(() => {
-                    check_id = $("#checkes").children()[i].id
-                    x_coord = parseInt(check_id.split("_")[0]);
-                    y_coord = parseInt(check_id.split("_")[1]);
+                    try {
+                        check_id = $("#checkes").children()[i].id
+                        x_coord = parseInt(check_id.split("_")[0]);
+                        y_coord = parseInt(check_id.split("_")[1]);
+                    } catch (error) {}
                     checker_place(x_coord, y_coord);
                 }, i*2);
             }
@@ -689,9 +694,12 @@
             setTimeout(() => {
                 for (let i = 0; i < 100; i++) {
                     setTimeout(() => {
-                        smoke_id = $("#smoke_all").children()[i].id
-                        x_coord = parseInt(smoke_id.split("_")[0]);
-                        y_coord = parseInt(smoke_id.split("_")[1]);
+                        try {
+                            smoke_id = $("#smoke_all").children()[i].id
+                            x_coord = parseInt(smoke_id.split("_")[0]);
+                            y_coord = parseInt(smoke_id.split("_")[1]);
+                        } catch (error) {}
+                        
                         smoke_place(x_coord, y_coord);
                     }, i**1.4);
                 }
@@ -730,28 +738,34 @@
             function time_sec(){
                 setTimeout(() => {
                     setInterval(() => {
-                        if (level_is_started == 1) {
-                            if (level_is_pased == 0 && is_break == 1 && time_pass < 3000) {
-                                time_pass = time_pass + 5;
-                                if (String(time_pass/100).length <= 3) {
-                                    $("#time").text(time_pass/100);
-                                }
-                            }
-                            else if (level_is_pased == 0 && is_break == 0 && time_pass < 3000){
-                                time_pass_hod = time_pass_hod + 5;
-                                if (String(time_pass_hod/100).length <= 3) {
-                                    $("#time_hod").text(time_pass/100);
-                                }
-                            }
-                            else if (level_is_pased == 0 && is_break == 1 && time_pass >= 3000){
-                                hodov = hodov+1;
-                                $("#hod").text(hodov);
-                                time_pass = 0;
-                            }
-                            else{
-                                return;
+                        if (level_is_started == 1 && level_is_pased == 0) {
+                            time_pass = time_pass + 5;
+                            if (String(time_pass/100).length <= 3) {
+                                $("#time").text(time_pass/100);
                             }
                         }
+                        // if (level_is_started == 1) {
+                        //     if (level_is_pased == 0 && is_break == 1 && time_pass < 3000) {
+                        //         time_pass = time_pass + 5;
+                        //         if (String(time_pass/100).length <= 3) {
+                        //             $("#time").text(time_pass/100);
+                        //         }
+                        //     }
+                        //     else if (level_is_pased == 0 && is_break == 0 && time_pass < 3000){
+                        //         time_pass_hod = time_pass_hod + 5;
+                        //         if (String(time_pass_hod/100).length <= 3) {
+                        //             $("#time_hod").text(time_pass/100);
+                        //         }
+                        //     }
+                        //     else if (level_is_pased == 0 && is_break == 1 && time_pass >= 3000){
+                        //         hodov = hodov+1;
+                        //         $("#hod").text(hodov);
+                        //         time_pass = 0;
+                        //     }
+                        //     else{
+                        //         return;
+                        //     }
+                        // }
                     }, time_speed/2);
                 }, 550);
             }
