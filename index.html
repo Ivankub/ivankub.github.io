@@ -35,7 +35,7 @@
         <div id="alert"></div>
         <div id="alert_ok">OK</div>
         <div id="alert_fon"></div>
-        <div id="version">v 0.10.8</div>
+        <div id="version">v 0.10.10</div>
     </div>
 </body>
 <script type="text/javascript">
@@ -243,8 +243,10 @@
         start_game();
     }, 1);
     function button_click_n(id) {
-        hodov = hodov + 1
-        $("#hod").text(hodov);
+        if (level_is_started == 1) {
+            hodov = hodov + 1
+            $("#hod").text(hodov);
+        }
         $(".block_near").attr("class", "block button");
         $(".smoke_near").attr("class", "smoke");
         x = parseInt(id.split("_")[0]);
